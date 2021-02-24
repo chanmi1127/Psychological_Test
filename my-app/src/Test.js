@@ -38,6 +38,7 @@ function Test() {
 
     return (
         <div>
+          {page}
           <div>
             {visibleQuestions.map((question) => {
               const qitemNo = parseInt(question.qitemNo, 10);
@@ -84,7 +85,7 @@ function Test() {
           <button
             onClick={() => {
               setPage((current) => {
-                return current + 1;
+                return current - 1;
               });
             }}
           >
