@@ -4,6 +4,8 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 import UserInfo from './UserInfo';
 import TestExample from './TestExample';
+import Test from './Test';
+import TestFinished from './TestFinished';
 
 
 ReactDOM.render(
@@ -11,6 +13,8 @@ ReactDOM.render(
     <Switch>
       <Route exact path='/' component={UserInfo} />
       <Route path='/testexample' component={TestExample} />
+      <Route path='/test' component={Test} />
+      <Route path='/testfinished' component={TestFinished} />
     </Switch>
   </BrowserRouter>
  ,document.getElementById('root')
