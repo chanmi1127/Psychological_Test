@@ -38,7 +38,7 @@ function Test() {
 
     return (
         <div>
-          {page}
+          <h1>검사 진행</h1>
           <div>
             {visibleQuestions.map((question) => {
               const qitemNo = parseInt(question.qitemNo, 10);
