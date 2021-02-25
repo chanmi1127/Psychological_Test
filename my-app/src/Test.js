@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useMemo, useCallback} from 'react';
 import axios from 'axios';
+import {Link} from 'react-router-dom';
 
 function Test() {
     const [questions, setQuestions] = useState([]);
@@ -82,16 +83,25 @@ function Test() {
             })}
           </div>
           <br />
-          <button
+          {page > 0? (
+            <button
             onClick={() => {
               setPage((current) => {
-                return current - 1;
+                  return current - 1;   
               });
             }}
           >
             이전 
           </button>
-          <button
+          ) : (
+            <Link to='/testexample'>
+              <button>
+              이전
+            </button>
+            </Link>
+          )}
+          {page < 5? (
+            <button
             onClick={() => {
               setPage((current) => {
                 return current + 1;
@@ -101,6 +111,13 @@ function Test() {
           >
             다음 
           </button>
+          ) : (
+            <Link to='/testfinished'>
+              <button>
+              다음
+            </button>
+            </Link>
+          )} 
         </div>
       );
     };
