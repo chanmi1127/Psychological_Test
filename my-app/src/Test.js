@@ -32,13 +32,21 @@ function Test() {
         return isDisabled;
       }, [answers, visibleQuestions]);
 
+    const submit = e => {
+      e.preventDefault()
+      fetch('www.career.go.kr/inspct/openapi/test/report?apikey=8b75f809812e0d513b4789912f3513cd&qestrnSeq=6',{
+        method: 'POST',
+        body: JSON.stringify({answers})
+      })
+    }
+
 
     useEffect(() => {
         fetchQuestions();
     }, [fetchQuestions]);
 
     return (
-        <div>
+      <form onSubmit={submit}>
           <h1>검사 진행</h1>
           <div>
             {visibleQuestions.map((question) => {
@@ -118,7 +126,7 @@ function Test() {
               </button>
             </Link>
           )} 
-        </div>
+        </form>
       );
     };
     
