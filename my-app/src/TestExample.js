@@ -27,8 +27,8 @@ function TestExample() {
                 <div>
                     <h3>직업과 관련된 두개의 가치 중에서 자기에게 더 중요한 가치에 표시하세요.</h3>
                     {sampleQuestion}<br />
-                    <input type="radio" name="sampleAnswer"/>{sampleAnswer01}
-                    <input type="radio" name="sampleAnswer"/>{sampleAnswer02}
+                    <label><input type="radio" name="sampleAnswer"/>{sampleAnswer01}</label>
+                    <label><input type="radio" name="sampleAnswer"/>{sampleAnswer02}</label>
                 </div>
                 <Link to='/'>
                     <button>이전</button>

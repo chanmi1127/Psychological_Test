@@ -51,7 +51,7 @@ function Test() {
                     <label>
                       <input
                         type="radio"
-                        name={`answers[${qitemNo - 1}]`}
+                        name={`B[${qitemNo}]`}
                         onChange={() => {
                           setAnswers((current) => {
                             const newAnswers = [...current];
@@ -66,7 +66,7 @@ function Test() {
                     <label>
                       <input
                         type="radio"
-                        name={`answers[${qitemNo - 1}]`}
+                        name={`B[${qitemNo}]`}
                         onChange={() => {
                           setAnswers((current) => {
                             const newAnswers = [...current];
@@ -112,10 +112,10 @@ function Test() {
             다음 
           </button>
           ) : (
-            <Link to='/testfinished'>
-              <button>
-              다음
-            </button>
+            <Link to='/testfinished/:seq'>
+              <button type="submit" disabled={isButtonDisabled}>
+                제출
+              </button>
             </Link>
           )} 
         </div>

@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {Link} from 'react-router-dom';
+import './UserInfo.css';
 
 function UserInfo() {
 
@@ -18,24 +19,26 @@ function UserInfo() {
 
 
   return (
-    <div>
-      <h1>직업가치관 검사</h1>
+    <div className="user-info">
+      <div className="title">
+        직업가치관 검사
+      </div>
       <form>
-        <div>
+        <div className="user-name">
           <h3>이름</h3>
-          <p><input type="text" name="name" placeholder="이름" onChange={nameChange}/></p>
+          <p><label><input type="text" name="name" placeholder="이름" onChange={nameChange}/></label></p>
         </div>
-        <div>
+        <div className="user-gender">
           <h3>성별</h3>
           <p>
-              <input type="radio" name="gender" value="100323" onChange={genderChange}/>남성
-              <input type="radio" name="gender" value="100324" onChange={genderChange}/>여성
+            <label><input type="radio" name="gender" value="100323" onChange={genderChange}/>남성</label>
+            <label><input type="radio" name="gender" value="100324" onChange={genderChange}/>여성</label>
           </p>
         </div>
       </form>
-      <Link to='/testexample'>
-        <button type="submit" disabled={!name || !gender}>검사 시작</button>
-      </Link>
+        <Link to='/testexample'>
+          <button type="submit" disabled={!name || !gender}>검사 시작</button>
+        </Link>
     </div> 
   )
 }
