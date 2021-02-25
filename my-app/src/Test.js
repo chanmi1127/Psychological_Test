@@ -32,14 +32,19 @@ function Test() {
         return isDisabled;
       }, [answers, visibleQuestions]);
 
+      const answerscoreChange = questionNo => (e) => {
+        setAnswers((current) => {
+          const newAnswers = [...current];
+          newAnswers[questionNo - 1] = e.target.value;
+          return newAnswers;
+        })
+      };
+    
     const submit = e => {
       e.preventDefault()
-      fetch('www.career.go.kr/inspct/openapi/test/report?apikey=8b75f809812e0d513b4789912f3513cd&qestrnSeq=6',{
-        method: 'POST',
-        body: JSON.stringify({answers})
-      })
-    }
-
+      axios.post('www.career.go.kr/inspct/openapi/test/report?apikey=8b75f809812e0d513b4789912f3513cd&qestrnSeq=6',{
+        body: JSON.stringify({answers})})
+    };
 
     useEffect(() => {
         fetchQuestions();
@@ -60,13 +65,8 @@ function Test() {
                       <input
                         type="radio"
                         name={`B[${qitemNo}]`}
-                        onChange={() => {
-                          setAnswers((current) => {
-                            const newAnswers = [...current];
-                            newAnswers[qitemNo - 1] = question.answerScore01;
-                            return newAnswers;
-                          });
-                        }}
+                        value={question.answerScore01}
+                        onChange={answerscoreChange(question.qitemNo)}
                       />
                       {question.answer01}
                     </label>
@@ -75,13 +75,8 @@ function Test() {
                       <input
                         type="radio"
                         name={`B[${qitemNo}]`}
-                        onChange={() => {
-                          setAnswers((current) => {
-                            const newAnswers = [...current];
-                            newAnswers[qitemNo - 1] = question.answerScore02;
-                            return newAnswers;
-                          });
-                        }}
+                        value={question.answerScore02}
+                        onChange={answerscoreChange(question.qitemNo)}
                       />
                       {question.answer02}
                     </label>
@@ -120,11 +115,9 @@ function Test() {
             다음 
           </button>
           ) : (
-            <Link to='/testfinished/:seq'>
               <button type="submit" disabled={isButtonDisabled}>
                 제출
               </button>
-            </Link>
           )} 
         </form>
       );
