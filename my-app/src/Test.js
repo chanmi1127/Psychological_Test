@@ -1,13 +1,35 @@
 import React, {useState, useEffect, useMemo, useCallback} from 'react';
 import axios from 'axios';
-import {Link} from 'react-router-dom';
 
 function Test() {
+    const [name, setName] = useState('');
+    const [gender, setGender] = useState('');
+    const [sampleQuestion, setSampleQuestion] = useState('');
+    const [sampleAnswer01, setSampleAnswer01] = useState('');
+    const [sampleAnswer02, setSampleAnswer02] = useState('');
     const [questions, setQuestions] = useState([]);
     const [answers, setAnswers] = useState([]);
-    const [page, setPage] = useState(0);
+    const [page, setPage] = useState(-2);
 
     var apiUrl  = 'https://www.career.go.kr/inspct/openapi/test/questions?apikey=8b75f809812e0d513b4789912f3513cd&q=6';
+
+    const nameChange = (e) => {
+      console.log(e.target.value);
+      setName(e.target.value);
+    };
+  
+    const genderChange = (e) => {
+      console.log(e.target.value);
+      setGender(e.target.value);
+    };
+
+    const fetchSample = useCallback(async  () => {
+      const response = await axios.get(apiUrl);
+      setSampleQuestion(response.data.RESULT[1].question);
+      setSampleAnswer01(response.data.RESULT[1].answer01);
+      setSampleAnswer02(response.data.RESULT[1].answer02);
+  },[apiUrl]);
+
 
     const fetchQuestions = useCallback(async  () => {
         const response = await axios.get(apiUrl);
@@ -40,89 +62,142 @@ function Test() {
         })
       };
     
-    const submit = e => {
-      e.preventDefault()
-      axios.post('www.career.go.kr/inspct/openapi/test/report?apikey=8b75f809812e0d513b4789912f3513cd&qestrnSeq=6',{
-        body: JSON.stringify({answers})})
+    const handleSubmit = e => {
+      e.preventDefault();
+      var timestamp = String(Date.now());
+      const totalAnswers = answers.map((answer, index) => 
+        "B"+ String(parseInt(index)+1) + "=" + answer);
+      const newTotalAnswers = totalAnswers.join(' ');
+      console.log(newTotalAnswers);
+
+      const data = {
+        "apikey": "8b75f809812e0d513b4789912f3513cd",
+        "qestrnSeq": "6",
+        "trgetSe": "100209",
+        "name": name,
+        "gender": gender,
+        "startDtm": timestamp,
+        "answers": newTotalAnswers
+      };
+
+      console.log(data);
+
+      var postApiUrl = 'http:/www.career.go.kr/inspct/openapi/test/report';
+      axios.post(postApiUrl, data, {headers: {'Content-Type': 'application/json'}})
+        
     };
+
 
     useEffect(() => {
+        fetchSample();
         fetchQuestions();
-    }, [fetchQuestions]);
+    }, [fetchSample,fetchQuestions]);
 
     return (
-      <form onSubmit={submit}>
-          <h1>검사 진행</h1>
+        page === -2? (
           <div>
-            {visibleQuestions.map((question) => {
-              const qitemNo = parseInt(question.qitemNo, 10);
-    
-              return (
-                <div key={qitemNo}>
-                  <h3>{question.question}</h3>
-                  <div>
-                    <label>
-                      <input
-                        type="radio"
-                        name={`B[${qitemNo}]`}
-                        value={question.answerScore01}
-                        onChange={answerscoreChange(question.qitemNo)}
-                      />
-                      {question.answer01}
-                    </label>
-    
-                    <label>
-                      <input
-                        type="radio"
-                        name={`B[${qitemNo}]`}
-                        value={question.answerScore02}
-                        onChange={answerscoreChange(question.qitemNo)}
-                      />
-                      {question.answer02}
-                    </label>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          <br />
-          {page > 0? (
-            <button
-            onClick={() => {
+            <h1>직업가치관 검사</h1>
+            <h3>이름</h3>
+            <p><label><input type="text" name="name" placeholder="이름" onChange={nameChange}/></label></p>
+            <h3>성별</h3>
+            <p>
+            <label><input type="radio" name="gender" value="100323" onChange={genderChange}/>남성</label>
+            <label><input type="radio" name="gender" value="100324" onChange={genderChange}/>여성</label>
+            </p>
+            <button type="submit" onClick={() => {
               setPage((current) => {
-                  return current - 1;   
+              return current + 1;
               });
-            }}
-          >
-            이전 
-          </button>
-          ) : (
-            <Link to='/testexample'>
-              <button>
-              이전
+              }}
+              disabled={!name || !gender}>
+              검사 시작
             </button>
-            </Link>
-          )}
-          {page < 5? (
-            <button
-            onClick={() => {
+          </div>
+        ) : ( 
+        page < 0? (
+        <div>
+          <h1>직업가치관 검사</h1>
+          <h2>검사 예시</h2>
+          <h3>직업과 관련된 두개의 가치 중에서 자기에게 더 중요한 가치에 표시하세요.</h3>
+            {sampleQuestion}<br />
+            <label><input type="radio" name="sampleAnswer"/>{sampleAnswer01}</label>
+            <label><input type="radio" name="sampleAnswer"/>{sampleAnswer02}</label><br />
+          <button onClick={() => {
               setPage((current) => {
-                return current + 1;
+              return current - 1;
               });
-            }}
-            disabled={isButtonDisabled}
-          >
-            다음 
+              }}>
+            이전
           </button>
-          ) : (
-              <button type="submit" disabled={isButtonDisabled}>
-                제출
-              </button>
-          )} 
-        </form>
-      );
-    };
+          <button onClick={() => {
+              setPage((current) => {
+              return current + 1;
+              });
+              }}>
+            검사 시작
+          </button>
+       </div>
+      ) : (
+        <div>
+        <h1>검사 진행</h1>
+        <div>
+          {visibleQuestions.map((question) => {
+            const qitemNo = parseInt(question.qitemNo, 10);
+            return (
+              <div key={qitemNo}>
+                <h3>{question.question}</h3>
+                  <label>
+                    <input
+                      type="radio"
+                      name={`B[${qitemNo}]`}
+                      value={question.answerScore01}
+                      onChange={answerscoreChange(question.qitemNo)}
+                    />
+                    {question.answer01}
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name={`B[${qitemNo}]`}
+                      value={question.answerScore02}
+                      onChange={answerscoreChange(question.qitemNo)}
+                    />
+                    {question.answer02}
+                  </label>
+              </div>
+            );
+          })}
+        </div>
+        <br />
+        <button
+          onClick={() => {
+            setPage((current) => {
+                return current - 1;   
+            });
+          }}
+        >
+          이전 
+        </button>
+        {page < 5? (
+        <button
+          onClick={() => {
+            setPage((current) => {
+              return current + 1;
+            });
+          }}
+          disabled={isButtonDisabled}
+        >
+          다음 
+        </button>
+        ):( 
+        <button type="submit" onClick={handleSubmit} disabled={isButtonDisabled}>
+          제출
+        </button>
+        )}
+        </div>
+        ))  
+    );
+  };
+  
     
-    export default Test;
-
-    
+export default Test;
