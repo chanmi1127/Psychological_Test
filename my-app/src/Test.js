@@ -10,15 +10,16 @@ function Test() {
     const [questions, setQuestions] = useState([]);
     const [answers, setAnswers] = useState([]);
     const [page, setPage] = useState(-2);
+    const apiKey = '8b75f809812e0d513b4789912f3513cd';
 
-    var apiUrl  = 'https://www.career.go.kr/inspct/openapi/test/questions?apikey=8b75f809812e0d513b4789912f3513cd&q=6';
+    const apiUrl  = `https://www.career.go.kr/inspct/openapi/test/questions?apikey=${apiKey}&q=6`;
 
-    const nameChange = (e) => {
+    const handleName = (e) => {
       console.log(e.target.value);
       setName(e.target.value);
     };
   
-    const genderChange = (e) => {
+    const handleGender = (e) => {
       console.log(e.target.value);
       setGender(e.target.value);
     };
@@ -64,14 +65,14 @@ function Test() {
     
     const handleSubmit = e => {
       e.preventDefault();
-      var timestamp = String(Date.now());
+      const timestamp = String(Date.now());
       const totalAnswers = answers.map((answer, index) => 
         "B"+ String(parseInt(index)+1) + "=" + answer);
       const newTotalAnswers = totalAnswers.join(' ');
       console.log(newTotalAnswers);
 
       const data = {
-        "apikey": "8b75f809812e0d513b4789912f3513cd",
+        "apikey": apiKey,
         "qestrnSeq": "6",
         "trgetSe": "100209",
         "name": name,
@@ -82,10 +83,17 @@ function Test() {
 
       console.log(data);
 
-      var postApiUrl = 'http:/www.career.go.kr/inspct/openapi/test/report';
+      const postApiUrl = 'http://www.career.go.kr/inspct/openapi/test/report';
       axios.post(postApiUrl, data, {headers: {'Content-Type': 'application/json'}})
-        
+        .then(response => {
+          console.log(response.data);
+          console.log(response.data.RESULT.url);
+          console.log(response.data.RESULT.url.split("=")[1]);
+        }
+        );
+      
     };
+
 
 
     useEffect(() => {
@@ -98,11 +106,11 @@ function Test() {
           <div>
             <h1>직업가치관 검사</h1>
             <h3>이름</h3>
-            <p><label><input type="text" name="name" placeholder="이름" onChange={nameChange}/></label></p>
+            <p><label><input type="text" name="name" placeholder="이름" onChange={handleName}/></label></p>
             <h3>성별</h3>
             <p>
-            <label><input type="radio" name="gender" value="100323" onChange={genderChange}/>남성</label>
-            <label><input type="radio" name="gender" value="100324" onChange={genderChange}/>여성</label>
+            <label><input type="radio" name="gender" value="100323" onChange={handleGender}/>남성</label>
+            <label><input type="radio" name="gender" value="100324" onChange={handleGender}/>여성</label>
             </p>
             <button type="submit" onClick={() => {
               setPage((current) => {
@@ -192,7 +200,7 @@ function Test() {
         ):( 
         <button type="submit" onClick={handleSubmit} disabled={isButtonDisabled}>
           제출
-        </button>
+        </button> 
         )}
         </div>
         ))  
