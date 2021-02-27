@@ -1,21 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 
-import Test from './Test';
-import TestFinished from './TestFinished';
-import TestResult from './TestResult';
-
+import App from './App';
 
 ReactDOM.render(
   <BrowserRouter>
-    <Switch>
-      <Route path='/' component={Test} />
-      <Route path='/testfinished/:seq' component={TestFinished} />
-      <Route path='/testresult/:seq' component={TestResult} />
-    </Switch>
+    <App />
   </BrowserRouter>
- ,document.getElementById('root')
+  , document.getElementById('root')
 );
 
 
