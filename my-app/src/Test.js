@@ -11,8 +11,9 @@ function Test() {
     const [answers, setAnswers] = useState([]);
     const [page, setPage] = useState(-2);
     const apiKey = '8b75f809812e0d513b4789912f3513cd';
-
+    
     const apiUrl  = `https://www.career.go.kr/inspct/openapi/test/questions?apikey=${apiKey}&q=6`;
+    
 
     const handleName = (e) => {
       console.log(e.target.value);
@@ -33,12 +34,17 @@ function Test() {
 
 
     const fetchQuestions = useCallback(async  () => {
-        const response = await axios.get(apiUrl);
-        setQuestions(response.data.RESULT);
-        setAnswers(() => {
-            return new Array(response.data.RESULT.length);
+      const response = await axios.get(apiUrl);
+      setQuestions(response.data.RESULT);
+      setAnswers(() => {
+          return new Array(response.data.RESULT.length);
         });
     },[apiUrl]);
+
+    useEffect(() => {
+      fetchSample();
+      fetchQuestions();
+  }, [fetchSample,fetchQuestions]);
     
     const visibleQuestions = useMemo(() => {
         return questions.slice(page*5, (page+1)*5);
@@ -55,51 +61,47 @@ function Test() {
         return isDisabled;
       }, [answers, visibleQuestions]);
 
-      const answerscoreChange = questionNo => (e) => {
-        setAnswers((current) => {
-          const newAnswers = [...current];
-          newAnswers[questionNo - 1] = e.target.value;
-          return newAnswers;
+    const answerscoreChange = questionNo => (e) => {
+      setAnswers((current) => {
+        const newAnswers = [...current];
+        newAnswers[questionNo - 1] = e.target.value;
+        return newAnswers;
         })
       };
-    
+
+  
     const handleSubmit = e => {
       e.preventDefault();
-      const timestamp = String(Date.now());
       const totalAnswers = answers.map((answer, index) => 
-        "B"+ String(parseInt(index)+1) + "=" + answer);
-      const newTotalAnswers = totalAnswers.join(' ');
-      console.log(newTotalAnswers);
-
-      const data = {
-        "apikey": apiKey,
-        "qestrnSeq": "6",
-        "trgetSe": "100209",
-        "name": name,
-        "gender": gender,
-        "startDtm": timestamp,
-        "answers": newTotalAnswers
-      };
-
+          "B"+ String(parseInt(index)+1) + "=" + answer);
+        const newTotalAnswers = totalAnswers.join(' ');
+        console.log(newTotalAnswers);
+    
+        const timestamp = String(Date.now());
+        const data = {
+          "apikey": apiKey,
+          "qestrnSeq": "6",
+          "trgetSe": "100209",
+          "name": name,
+          "gender": gender,
+          "startDtm": timestamp,
+          "answers": newTotalAnswers
+        };
+  
       console.log(data);
 
+      const handlePost = async () => {
       const postApiUrl = 'http://www.career.go.kr/inspct/openapi/test/report';
-      axios.post(postApiUrl, data, {headers: {'Content-Type': 'application/json'}})
-        .then(response => {
-          console.log(response.data);
-          console.log(response.data.RESULT.url);
-          console.log(response.data.RESULT.url.split("=")[1]);
-        }
-        );
+      const response = await axios.post(postApiUrl, data, {headers: {'Content-Type': 'application/json'}});
+      const seq = response.data.RESULT.url.split("=")[1];
+      console.log(seq);
+      };
+
+      handlePost();
       
     };
 
-
-
-    useEffect(() => {
-        fetchSample();
-        fetchQuestions();
-    }, [fetchSample,fetchQuestions]);
+   
 
     return (
         page === -2? (
