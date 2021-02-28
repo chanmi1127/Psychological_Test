@@ -18,13 +18,21 @@ function TestResult() {
     const [scores, setScores] = useState([]);
     const [name, setName] = useState('');
     const [gender, setGender] = useState('');
+    const [firstHighestScoreNum, setFirstHighestScoreNum] = useState('');
+    const [secondHighestScoreNum, setSecondHighestScoreNum] = useState('');
+    const relatedJobsApi = `https://inspct.career.go.kr/inspct/api/psycho/value/jobs?no1=${firstHighestScoreNum}&no2=${secondHighestScoreNum}`;
+    const [relatedJobsData, setRelatedJobsData] = useState([]);
+
+
 
     const handleResult = useCallback(async () => {
         const response = await axios.get(testResultApi);
         console.log(response);
 
         setName(response.data.user.name);
-        setGender(response.data.user.gender);
+
+        setGender(response.data.user.grade);
+
 
         const wonScores = response.data.result.wonScore.split(' ');
         wonScores.pop();
@@ -33,42 +41,47 @@ function TestResult() {
             wonScore[2]
         );
 
-        console.log(newWonScores);
-
         setScores(newWonScores);
-        
 
-        let firstBiggestScore;
-        let idxfirstBiggestScore;
-        let SecondBiggestScore;
-        let idxSecondBiggestScore;
 
-        newWonScores.forEach((newWonScore, index) => {
-            if (index === 0) {
-                firstBiggestScore = newWonScore;
-                idxfirstBiggestScore = index;
-            }
-            else if (newWonScore > firstBiggestScore) {
-                SecondBiggestScore = firstBiggestScore;
-                idxSecondBiggestScore = idxfirstBiggestScore;
-                firstBiggestScore = newWonScore;
-                idxfirstBiggestScore = index;
-            }
-            else if (SecondBiggestScore < newWonScore < firstBiggestScore) {
-                SecondBiggestScore = newWonScore;
-                idxSecondBiggestScore = index;
 
-            }
-            console.log(firstBiggestScore);
-            console.log(idxfirstBiggestScore);
-            console.log(SecondBiggestScore);
-            console.log(idxSecondBiggestScore);
+        const WonScoresItems = [
+            { num: 1, value: newWonScores[0] },
+            { num: 2, value: newWonScores[1] },
+            { num: 3, value: newWonScores[2] },
+            { num: 4, value: newWonScores[3] },
+            { num: 5, value: newWonScores[4] },
+            { num: 6, value: newWonScores[5] },
+            { num: 7, value: newWonScores[6] }
+        ];
+
+        const sortedWonScoresItems = WonScoresItems.sort(function (a, b) {
+            return a.value - b.value
         });
+
+
+        const FirstHighestNum = sortedWonScoresItems[6].num;
+        const SecondHighestNum = sortedWonScoresItems[5].num;
+
+
+        setFirstHighestScoreNum(FirstHighestNum);
+        setSecondHighestScoreNum(SecondHighestNum);
+
+
     }, [testResultApi]);
+
+
+    const handleRelatedJobs = useCallback(async () => {
+        const response = await axios.get(relatedJobsApi);
+        setRelatedJobsData(response.data);
+        console.log(relatedJobsData);
+
+    }, [relatedJobsApi, relatedJobsData]);
 
     useEffect(() => {
         handleResult();
-    }, [handleResult]);
+        handleRelatedJobs();
+    }, [handleResult, handleRelatedJobs]);
 
 
     return (
@@ -86,29 +99,66 @@ function TestResult() {
                 <tbody>
                     <tr>
                         <td>{name}</td>
-                        <td>{gender}</td>
+                        <td>{gender === '100323' ? '남성' : '여성'}</td>
                         <td>date</td>
                     </tr>
                 </tbody>
             </table>
             <div>
-            <h2>직업가치관 검사 결과 그래프</h2>
-            <Chart
-                width={'800px'}
-                height={'600px'}
-                chartType="Bar"
-                loader={<div>Loading Chart</div>}
-                data={[
-                    ['직업가치관', '점수'],
-                    ['능력발휘', scores[0]],
-                    ['보수', scores[1]],
-                    ['안정성', scores[2]],
-                    ['사회적 인정', scores[3]],
-                    ['사회봉사', scores[4]],
-                    ['자기계발', scores[5]],
-                    ['창의성', scores[6]],
-                ]}
-            />
+                <h2>1. 직업가치관 검사 결과 </h2>
+                <h4>직업가치관 검사 결과 그래프</h4>
+                <Chart
+                    width={'600px'}
+                    height={'400px'}
+                    chartType="Bar"
+                    loader={<div>Loading Chart</div>}
+                    data={[
+                        ['직업가치관', '점수'],
+                        ['능력발휘', scores[0]],
+                        ['보수', scores[1]],
+                        ['안정성', scores[2]],
+                        ['사회적 인정', scores[3]],
+                        ['사회봉사', scores[4]],
+                        ['자기계발', scores[5]],
+                        ['창의성', scores[6]],
+                    ]}
+                />
+            </div>
+            <div>
+                <h2>2. 가치관과 관련이 높은 직업</h2>
+                <h4>종사자 평균 학력별</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>분야</th>
+                            <th>직업</th>
+                        </tr>
+                        <tr>
+                            <td>고등학교 졸업</td>
+                            <td>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>대학교 졸업</td>
+                            <td>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>대학원 졸업</td>
+                            <td>
+
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     );
