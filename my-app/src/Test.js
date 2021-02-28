@@ -92,6 +92,7 @@ function Test() {
 
     const handlePost = async () => {
       const response = await axios.post(postApiUrl, data, { headers: { 'Content-Type': 'application/json' } });
+      console.log(response);
       const seq = response.data.RESULT.url.split("=")[1];
       console.log(seq);
 
