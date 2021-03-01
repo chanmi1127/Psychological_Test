@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
+// import Button from 'react-bootstrap/Button';
 
 function Test() {
   const [name, setName] = useState('');
@@ -15,6 +16,27 @@ function Test() {
   const apiUrl = `https://www.career.go.kr/inspct/openapi/test/questions?apikey=${apiKey}&q=6`;
   const postApiUrl = 'http://www.career.go.kr/inspct/openapi/test/report';
   const history = useHistory();
+
+  const styleTitle = {
+    fontSize: "2.5rem",
+    textAlign: "center",
+    fontWeight: "400",
+    padding: "2rem"
+  };
+
+  const styleContent = {
+    fontSize: "1.5rem",
+    textAlign: "center",
+    fontWeight: "300",
+    padding: 0
+  };
+
+  const styleUserInfo = {
+    fontSize: "1.25rem",
+    textAlign: "center",
+    fontWeight: "300",
+    padding: 0
+  };
 
   const handleName = (e) => {
     console.log(e.target.value);
@@ -107,26 +129,31 @@ function Test() {
   return (
     page === -2 ? (
       <div>
-        <h1>직업가치관 검사</h1>
-        <h2>
-          직업가치란 직업생활을 통하여 충족하고자 하는 욕구 또는 상대적으로 중요시하는 것을 의미합니다.
-          이 검사는 직업과 관련된 다양한 욕구 및 가치들에 대해 여러분이 상대적으로 무엇을 얼마나 더 중요하게 여기는가를 살펴보고, 그 가치가 충족될 가능성이 높은 직업을 탐색할 수 있도록 도움을 주는 검사입
-        </h2>
-        <h3>이름</h3>
-        <p><label><input type="text" name="name" placeholder="이름" onChange={handleName} /></label></p>
-        <h3>성별</h3>
-        <p>
-          <label><input type="radio" name="gender" value="100323" onChange={handleGender} />남성</label>
-          <label><input type="radio" name="gender" value="100324" onChange={handleGender} />여성</label>
-        </p>
-        <button type="submit" onClick={() => {
-          setPage((current) => {
-            return current + 1;
-          });
-        }}
-          disabled={!name || !gender}>
-          검사 시작
+        <div>
+          <div style={styleTitle}>직업가치관 검사</div>
+          <div style ={styleContent}>
+          직업가치란 직업생활을 통하여 충족하고자 하는 욕구 또는 상대적으로 중요시하는 것을 의미합니다. 
+          이 검사는 직업과 관련된 다양한 욕구 및 가치들에 대해 여러분이 상대적으로 무엇을 얼마나 더 중요하게 여기는가를 살펴보고, 
+          그 가치가 충족될 가능성이 높은 직업을 탐색할 수 있도록 도움을 주는 검사입니다.
+        </div>
+        </div>
+        <div style={styleUserInfo}>
+          <p>이름</p>
+          <p><label><input type="text" name="name" placeholder="이름" onChange={handleName} /></label></p>
+          <p>성별</p>
+          <p>
+            <label><input type="radio" name="gender" value="100323" onChange={handleGender} />남성</label>
+            <label><input type="radio" name="gender" value="100324" onChange={handleGender} />여성</label>
+          </p>
+          <button type="submit" onClick={() => {
+            setPage((current) => {
+              return current + 1;
+            });
+          }}
+            disabled={!name || !gender}>
+            검사 시작
             </button>
+        </div>
       </div>
     ) : (
         page < 0 ? (

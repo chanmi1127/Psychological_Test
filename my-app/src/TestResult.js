@@ -18,6 +18,7 @@ function TestResult() {
     const [scores, setScores] = useState([]);
     const [name, setName] = useState('');
     const [gender, setGender] = useState('');
+    const [date, SetDate] = useState('');
     const [firstHighestScoreNum, setFirstHighestScoreNum] = useState('');
     const [secondHighestScoreNum, setSecondHighestScoreNum] = useState('');
     const relatedJobsApi = `https://inspct.career.go.kr/inspct/api/psycho/value/jobs?no1=${firstHighestScoreNum}&no2=${secondHighestScoreNum}`;
@@ -30,9 +31,8 @@ function TestResult() {
         console.log(response);
 
         setName(response.data.user.name);
-
-        setGender(response.data.user.grade);
-
+        setGender(response.data.user.grade === '100323' ? '남성' : '여성');
+        SetDate(response.data.inspct.registDt.split('T')[0]);
 
         const wonScores = response.data.result.wonScore.split(' ');
         wonScores.pop();
@@ -86,7 +86,7 @@ function TestResult() {
 
     return (
         <div>
-            <h2>직업가치관검사 결과표</h2>
+            <h1>직업가치관 검사 결과표</h1>
             <p>직업가치관이란 직업을 선택할 때 영향을 끼치는 자신만의 믿음과 신념입니다. 따라서 여러분의 직업생활과 관련하여 포기하지 않는 무게중심의 역할을 한다고 볼 수 있습니다. 직업가치관검사는 여러분이 직업을 선택할 때 상대적으로 어떠한 가치를 중요하게 생각하는지를 알려줍니다. 또한 본인이 가장 중요하게 생각하는 가치를 충족시켜줄 수 있는 직업에 대해 생각해 볼 기회를 제공합니다.</p>
             <table>
                 <thead>
@@ -99,8 +99,8 @@ function TestResult() {
                 <tbody>
                     <tr>
                         <td>{name}</td>
-                        <td>{gender === '100323' ? '남성' : '여성'}</td>
-                        <td>date</td>
+                        <td>{gender}</td>
+                        <td>{date}</td>
                     </tr>
                 </tbody>
             </table>
