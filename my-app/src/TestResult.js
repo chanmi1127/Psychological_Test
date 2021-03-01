@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { Chart } from "react-google-charts";
 
+
+
 // ! 참고
 // report 
 // https://inspct.career.go.kr/inspct/api/psycho/report?seq=seq값
@@ -24,8 +26,6 @@ function TestResult() {
     const relatedJobsApi = `https://inspct.career.go.kr/inspct/api/psycho/value/jobs?no1=${firstHighestScoreNum}&no2=${secondHighestScoreNum}`;
     const [relatedJobsData, setRelatedJobsData] = useState([]);
 
-
-
     const handleResult = useCallback(async () => {
         const response = await axios.get(testResultApi);
         console.log(response);
@@ -42,8 +42,6 @@ function TestResult() {
         );
 
         setScores(newWonScores);
-
-
 
         const WonScoresItems = [
             { num: 1, value: newWonScores[0] },
@@ -83,82 +81,128 @@ function TestResult() {
         handleRelatedJobs();
     }, [handleResult, handleRelatedJobs]);
 
+    const styleTitle = {
+        width: "auto",
+        fontSize: "2.5rem",
+        textAlign: "center",
+        fontWeight: "400",
+        padding: "1em"
+    };
+
+    const styleSubTitle = {
+        width: "auto",
+        fontSize: "2rem",
+        textAlign: "center",
+        fontWeight: "400",
+        padding: "0 1em"
+    };
+
+    const styleContent = {
+        width: "auto",
+        fontSize: "1.5rem",
+        textAlign: "center",
+        fontWeight: "360",
+        padding: "1em 2em"
+    };
+
+    const styleDiv = {
+        display: "flex",
+        justifyContent: "center"
+    };
+
+    const styleTable = {
+        fontSize: "1.5rem",
+        textAlign: "center",
+        fontWeight: "400",
+        border: "2px solid black",
+        borderCollapse: "collapse",
+        overFlow: "hidden"
+    };
+
+    const styleTdTh = {
+        border: "2px solid black",
+        padding: "10px 20px"
+    };
+
 
     return (
         <div>
-            <h1>직업가치관 검사 결과표</h1>
-            <p>직업가치관이란 직업을 선택할 때 영향을 끼치는 자신만의 믿음과 신념입니다. 따라서 여러분의 직업생활과 관련하여 포기하지 않는 무게중심의 역할을 한다고 볼 수 있습니다. 직업가치관검사는 여러분이 직업을 선택할 때 상대적으로 어떠한 가치를 중요하게 생각하는지를 알려줍니다. 또한 본인이 가장 중요하게 생각하는 가치를 충족시켜줄 수 있는 직업에 대해 생각해 볼 기회를 제공합니다.</p>
-            <table>
-                <thead>
-                    <tr>
-                        <th>이름</th>
-                        <th>성별</th>
-                        <th>검사일</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>{name}</td>
-                        <td>{gender}</td>
-                        <td>{date}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <div>
-                <h2>1. 직업가치관 검사 결과 </h2>
-                <h4>직업가치관 검사 결과 그래프</h4>
-                <Chart
-                    width={'600px'}
-                    height={'400px'}
-                    chartType="Bar"
-                    loader={<div>Loading Chart</div>}
-                    data={[
-                        ['직업가치관', '점수'],
-                        ['능력발휘', scores[0]],
-                        ['보수', scores[1]],
-                        ['안정성', scores[2]],
-                        ['사회적 인정', scores[3]],
-                        ['사회봉사', scores[4]],
-                        ['자기계발', scores[5]],
-                        ['창의성', scores[6]],
-                    ]}
-                />
-            </div>
-            <div>
-                <h2>2. 가치관과 관련이 높은 직업</h2>
-                <h4>종사자 평균 학력별</h4>
-                <table>
+            <div style={styleTitle}>직업가치관 검사 결과표</div>
+            <div style={styleContent}>직업가치관이란 직업을 선택할 때 영향을 끼치는 자신만의 믿음과 신념입니다. 따라서 여러분의 직업생활과 관련하여 포기하지 않는 무게중심의 역할을 한다고 볼 수 있습니다. 직업가치관검사는 여러분이 직업을 선택할 때 상대적으로 어떠한 가치를 중요하게 생각하는지를 알려줍니다. 또한 본인이 가장 중요하게 생각하는 가치를 충족시켜줄 수 있는 직업에 대해 생각해 볼 기회를 제공합니다.</div>
+            <div style={styleDiv}>
+                <table style={styleTable}>
                     <thead>
                         <tr>
-                            <th>분야</th>
-                            <th>직업</th>
-                        </tr>
-                        <tr>
-                            <td>고등학교 졸업</td>
-                            <td>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>대학교 졸업</td>
-                            <td>
-
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>대학원 졸업</td>
-                            <td>
-
-                            </td>
+                            <th style={styleTdTh}>이름</th>
+                            <th style={styleTdTh}>성별</th>
+                            <th style={styleTdTh}>검사일</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td style={styleTdTh}>{name}</td>
+                            <td style={styleTdTh}>{gender}</td>
+                            <td style={styleTdTh}>{date}</td>
                         </tr>
                     </tbody>
                 </table>
+            </div>
+            <div>
+                <div style={styleTitle}>1. 직업가치관 검사 결과 </div>
+                <div style={styleSubTitle}>직업가치관 검사 결과 그래프</div>
+                <div style={styleDiv}>
+                    <Chart
+                        width={'600px'}
+                        height={'400px'}
+                        chartType="Bar"
+                        loader={<div>Loading Chart</div>}
+                        data={[
+                            ['직업가치관', '점수'],
+                            ['능력발휘', scores[0]],
+                            ['보수', scores[1]],
+                            ['안정성', scores[2]],
+                            ['사회적 인정', scores[3]],
+                            ['사회봉사', scores[4]],
+                            ['자기계발', scores[5]],
+                            ['창의성', scores[6]],
+                        ]}
+                        rootProps={{ 'data-testid': '1' }}
+                    />
+                </div>
+            </div>
+            <div>
+                <div style={styleTitle}>2. 가치관과 관련이 높은 직업</div>
+                <div style={styleSubTitle}>종사자 평균 학력별</div>
+                <div style={styleDiv}>
+                    <table style={styleTable}>
+                        <thead>
+                            <tr>
+                                <th style={styleTdTh}>분야</th>
+                                <th style={styleTdTh}>직업</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style={styleTdTh}>고등학교 졸업</td>
+                                <td style={styleTdTh}>
+                                    업데이트 예정
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style={styleTdTh}>대학교 졸업</td>
+                                <td style={styleTdTh}>
+                                    업데이트 예정
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style={styleTdTh}>대학원 졸업</td>
+                                <td style={styleTdTh}>
+                                    업데이트 예정
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     );

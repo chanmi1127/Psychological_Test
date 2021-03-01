@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
-// import Button from 'react-bootstrap/Button';
+import Button from 'react-bootstrap/Button';
 
 function Test() {
   const [name, setName] = useState('');
@@ -12,38 +12,16 @@ function Test() {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState([]);
   const [page, setPage] = useState(-2);
-  const apiKey = '8b75f809812e0d513b4789912f3513cd';
-  const apiUrl = `https://www.career.go.kr/inspct/openapi/test/questions?apikey=${apiKey}&q=6`;
+  const apiUrl = `https://www.career.go.kr/inspct/openapi/test/questions?apikey=${process.env.REACT_APP_API_KEY}&q=6`;
   const postApiUrl = 'http://www.career.go.kr/inspct/openapi/test/report';
   const history = useHistory();
 
-  const styleTitle = {
-    fontSize: "2.5rem",
-    textAlign: "center",
-    fontWeight: "400",
-    padding: "2rem"
-  };
-
-  const styleContent = {
-    fontSize: "1.5rem",
-    textAlign: "center",
-    fontWeight: "300",
-    padding: 0
-  };
-
-  const styleUserInfo = {
-    fontSize: "1.25rem",
-    textAlign: "center",
-    fontWeight: "300",
-    padding: 0
-  };
-
-  const handleName = (e) => {
+  const handleNameChange = (e) => {
     console.log(e.target.value);
     setName(e.target.value);
   };
 
-  const handleGender = (e) => {
+  const handleGenderChange = (e) => {
     console.log(e.target.value);
     setGender(e.target.value);
   };
@@ -84,7 +62,7 @@ function Test() {
     return isDisabled;
   }, [answers, visibleQuestions]);
 
-  const handleAnswerScore = questionNo => (e) => {
+  const handleAnswerScoreChange = questionNo => (e) => {
     setAnswers((current) => {
       const newAnswers = [...current];
       newAnswers[questionNo - 1] = e.target.value;
@@ -101,7 +79,7 @@ function Test() {
     console.log(newTotalAnswers);
 
     const data = {
-      "apikey": apiKey,
+      "apikey": process.env.REACT_APP_API_KEY,
       "qestrnSeq": "6",
       "trgetSe": "100209",
       "name": name,
@@ -126,116 +104,177 @@ function Test() {
 
   };
 
+  const styleTitle = {
+    width: "auto",
+    fontSize: "2.5rem",
+    textAlign: "center",
+    fontWeight: "400",
+    padding: "1em"
+  };
+
+  const styleContent = {
+    width: "auto",
+    fontSize: "1.5rem",
+    textAlign: "center",
+    fontWeight: "360",
+    padding: "1em 2em"
+  };
+
+  const styleUserInfo = {
+    width: "auto",
+    fontSize: "1.25rem",
+    textAlign: "center",
+    fontWeight: "360",
+    padding: "1em"
+  };
+
+  const styleQuestion = {
+    width: "auto",
+    fontSize: "1.5rem",
+    textAlign: "center",
+    fontWeight: "400",
+    padding: "1em"
+  };
+
+  const styleAnswer = {
+    width: "auto",
+    fontSize: "1.5rem",
+    textAlign: "center",
+    fontWeight: "500",
+    padding: "1em"
+  };
+
   return (
     page === -2 ? (
       <div>
         <div>
           <div style={styleTitle}>직업가치관 검사</div>
-          <div style ={styleContent}>
-          직업가치란 직업생활을 통하여 충족하고자 하는 욕구 또는 상대적으로 중요시하는 것을 의미합니다. 
-          이 검사는 직업과 관련된 다양한 욕구 및 가치들에 대해 여러분이 상대적으로 무엇을 얼마나 더 중요하게 여기는가를 살펴보고, 
-          그 가치가 충족될 가능성이 높은 직업을 탐색할 수 있도록 도움을 주는 검사입니다.
+          <div style={styleContent}>
+            직업가치란 직업생활을 통하여 충족하고자 하는 욕구 또는 상대적으로 중요시하는 것을 의미합니다.
+            이 검사는 직업과 관련된 다양한 욕구 및 가치들에 대해 여러분이 상대적으로 무엇을 얼마나 더 중요하게 여기는가를 살펴보고,
+            그 가치가 충족될 가능성이 높은 직업을 탐색할 수 있도록 도움을 주는 검사입니다.
         </div>
         </div>
         <div style={styleUserInfo}>
           <p>이름</p>
-          <p><label><input type="text" name="name" placeholder="이름" onChange={handleName} /></label></p>
+          <p><label><input type="text" name="name" placeholder="이름" onChange={handleNameChange} /></label></p>
           <p>성별</p>
           <p>
-            <label><input type="radio" name="gender" value="100323" onChange={handleGender} />남성</label>
-            <label><input type="radio" name="gender" value="100324" onChange={handleGender} />여성</label>
+            <label><input type="radio" name="gender" value="100323" onChange={handleGenderChange} />남성</label>{' '}{' '}
+            <label><input type="radio" name="gender" value="100324" onChange={handleGenderChange} />여성</label>
           </p>
-          <button type="submit" onClick={() => {
+          <Button variant="outline-primary" size="lg" onClick={() => {
             setPage((current) => {
               return current + 1;
             });
-          }}
-            disabled={!name || !gender}>
+          }} disabled={!name || !gender}>
             검사 시작
-            </button>
+            </Button>
         </div>
       </div>
     ) : (
         page < 0 ? (
           <div>
-            <h1>직업가치관 검사</h1>
-            <h2>검사 예시</h2>
-            <h3>직업과 관련된 두개의 가치 중에서 자기에게 더 중요한 가치에 표시하세요.</h3>
-            {sampleQuestion}<br />
-            <label><input type="radio" name="sampleAnswer" />{sampleAnswer01}</label>
-            <label><input type="radio" name="sampleAnswer" />{sampleAnswer02}</label><br />
-            <button onClick={() => {
-              setPage((current) => {
-                return current - 1;
-              });
-            }}>
-              이전
-          </button>
-            <button onClick={() => {
-              setPage((current) => {
-                return current + 1;
-              });
-            }}>
-              검사 시작
-          </button>
+            <div style={styleTitle}>직업가치관 검사</div>
+            <div style={styleQuestion}>
+              <p>[검사 예시]</p>
+              직업과 관련된 두개의 가치 중에서 자기에게 더 중요한 가치에 표시하세요.<br />
+              {sampleQuestion}<br />
+            </div>
+            <div style={styleAnswer}>
+              <label style={{ marginRight: "2em" }}><input type="radio" name="sampleAnswer" />{sampleAnswer01}</label>
+              <label><input type="radio" name="sampleAnswer" />{sampleAnswer02}</label><br />
+              <div class="form-group row">
+                <div class="col-md-6">
+                  <Button class="btn form-control" variant="outline-primary" size="lg" onClick={() => {
+                    setPage((current) => {
+                      return current - 1;
+                    });
+                  }}>
+                    이전
+                  </Button>
+                </div>
+                <div class="col-md-6">
+                  <Button class="btn form-control" variant="outline-primary" size="lg" onClick={() => {
+                    setPage((current) => {
+                      return current + 1;
+                    });
+                  }}>
+                    검사 시작
+                  </Button>
+                </div>
+              </div>
+            </div>
           </div>
         ) : (
             <div>
-              <h1>검사 진행</h1>
+              <div style={styleTitle}>직업가치관 검사 진행</div>
               <div>
                 {visibleQuestions.map((question) => {
                   const qitemNo = parseInt(question.qitemNo, 10);
                   return (
                     <div key={qitemNo}>
-                      <h3>{question.question}</h3>
-                      <label>
-                        <input
-                          type="radio"
-                          name={`B[${qitemNo}]`}
-                          value={question.answerScore01}
-                          onChange={handleAnswerScore(question.qitemNo)}
-                        />
-                        {question.answer01}
-                      </label>
-                      <label>
-                        <input
-                          type="radio"
-                          name={`B[${qitemNo}]`}
-                          value={question.answerScore02}
-                          onChange={handleAnswerScore(question.qitemNo)}
-                        />
-                        {question.answer02}
-                      </label>
+                      <div style={styleQuestion}>{question.question}</div>
+                      <div style={styleAnswer}>
+                        <label style={{ marginRight: "2em" }}>
+                          <input
+                            type="radio"
+                            name={`B[${qitemNo}]`}
+                            value={question.answerScore01}
+                            onChange={handleAnswerScoreChange(question.qitemNo)}
+                          />
+                          {question.answer01}
+                        </label>
+                        <label>
+                          <input
+                            type="radio"
+                            name={`B[${qitemNo}]`}
+                            value={question.answerScore02}
+                            onChange={handleAnswerScoreChange(question.qitemNo)}
+                          />
+                          {question.answer02}
+                        </label>
+                      </div>
                     </div>
                   );
                 })}
               </div>
               <br />
-              <button
-                onClick={() => {
-                  setPage((current) => {
-                    return current - 1;
-                  });
-                }}
-              >
-                이전
-        </button>
-              {page < 5 ? (
-                <button
-                  onClick={() => {
-                    setPage((current) => {
-                      return current + 1;
-                    });
-                  }}
-                  disabled={isButtonDisabled}
-                >
-                  다음
-                </button>
-              ) : (
-                  <button onClick={handleSubmit} disabled={isButtonDisabled}>
-                    제출
-                  </button>
-                )}
+              <div style={styleAnswer}>
+                <div class="form-group row">
+                  <div class="col-md-6">
+                    <Button class="btn form-control" variant="outline-primary" size="lg"
+                      onClick={() => {
+                        setPage((current) => {
+                          return current - 1;
+                        });
+                      }}
+                    >
+                      이전
+                  </Button>
+                  </div>
+                  {page < 5 ? (
+                    <div class="col-md-6">
+                      <Button class="btn form-control" variant="outline-primary" size="lg"
+                        onClick={() => {
+                          setPage((current) => {
+                            return current + 1;
+                          });
+                        }}
+                        disabled={isButtonDisabled}
+                      >
+                        다음
+                    </Button>
+                    </div>
+                  ) : (
+                      <div class="col-md-6">
+                        <Button class="btn form-control" variant="outline-primary" size="lg" onClick={handleSubmit} disabled={isButtonDisabled}>
+                          제출
+                      </Button>
+                      </div>
+                    )}
+                </div>
+              </div>
             </div>
           ))
   );
