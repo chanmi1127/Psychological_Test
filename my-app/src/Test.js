@@ -32,8 +32,7 @@ function Test() {
     setSampleAnswer01(response.data.RESULT[1].answer01);
     setSampleAnswer02(response.data.RESULT[1].answer02);
   }, [apiUrl]);
-
-
+  
   const fetchQuestions = useCallback(async () => {
     const response = await axios.get(apiUrl);
     setQuestions(response.data.RESULT);
@@ -44,8 +43,12 @@ function Test() {
 
   useEffect(() => {
     fetchSample();
+  }, [fetchSample]);
+
+
+  useEffect(() => {
     fetchQuestions();
-  }, [fetchSample, fetchQuestions]);
+  }, [fetchQuestions]);
 
   const visibleQuestions = useMemo(() => {
     return questions.slice(page * 5, (page + 1) * 5);
