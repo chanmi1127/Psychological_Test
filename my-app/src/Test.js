@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
-import Button from 'react-bootstrap/Button';
+import { Accordion, Button, Card } from "react-bootstrap";
 
 function Test() {
   const [name, setName] = useState('');
@@ -110,11 +110,11 @@ function Test() {
 
   const styleJobValueDesc = {
     display: "flex",
-    justifyContent: "center",
+    textAlign: "left",
     fontSize: "1rem",
     fontWeight: "400",
-    padding: "2em"
-};
+    padding: "1em 2em 2em 60em"
+  };
 
   const styleTitle = {
     width: "auto",
@@ -226,7 +226,7 @@ function Test() {
                   const qitemNo = parseInt(question.qitemNo, 10);
                   return (
                     <div key={qitemNo}>
-                      <div style={styleQuestion}>{question.question}</div>
+                      <div style={styleQuestion}>{qitemNo}{'. '}{question.question}</div>
                       <div style={styleAnswer}>
                         <label style={{ marginRight: "2em" }}>
                           <input
@@ -248,10 +248,21 @@ function Test() {
                           />
                           {question.answer02}
                         </label>
-                      </div>
-                      <div style={styleJobValueDesc}>
-                        {jobValues[jobValues.indexOf(question.answer01)]}{': '}{jobValueDescriptions[jobValues.indexOf(question.answer01)]} <br />
-                        {jobValues[jobValues.indexOf(question.answer02)]}{': '}{jobValueDescriptions[jobValues.indexOf(question.answer02)]}
+                        <Accordion style={styleJobValueDesc}>
+                          <Card>
+                            <Card.Header>
+                              <Accordion.Toggle as={Button} variant="link" eventKey="0" size="sm" >
+                                직업가치 설명 보기
+                              </Accordion.Toggle>
+                            </Card.Header>
+                            <Accordion.Collapse eventKey="0">
+                              <Card.Body>
+                                {jobValues[jobValues.indexOf(question.answer01)]}{': '}{jobValueDescriptions[jobValues.indexOf(question.answer01)]} <br />
+                                {jobValues[jobValues.indexOf(question.answer02)]}{': '}{jobValueDescriptions[jobValues.indexOf(question.answer02)]}
+                              </Card.Body>
+                            </Accordion.Collapse>
+                          </Card>
+                        </Accordion>
                       </div>
                     </div>
                   );
