@@ -21,18 +21,26 @@ function TestResult() {
     const [name, setName] = useState('');
     const [gender, setGender] = useState('');
     const [date, SetDate] = useState('');
-    const [firstHighestScoreNum, setFirstHighestScoreNum] = useState('');
-    const [secondHighestScoreNum, setSecondHighestScoreNum] = useState('');
-    const relatedJobsApi = `https://inspct.career.go.kr/inspct/api/psycho/value/jobs?no1=${firstHighestScoreNum}&no2=${secondHighestScoreNum}`;
-    const [relatedJobsData, setRelatedJobsData] = useState([]);
+    const [firstHighestScoreNum, setFirstHighestScoreNum] = useState(null);
+    const [secondHighestScoreNum, setSecondHighestScoreNum] = useState(null);
+    const jobsEducationLevelApi = `https://inspct.career.go.kr/inspct/api/psycho/value/jobs?no1=${firstHighestScoreNum}&no2=${secondHighestScoreNum}`;
+    const jobsMajorsApi = `https://inspct.career.go.kr/inspct/api/psycho/value/jobs?no1=${firstHighestScoreNum}&no2=${secondHighestScoreNum}`;
 
-    const handleResult = useCallback(async () => {
+
+
+    const fetchUserInfo = useCallback(async () => {
         const response = await axios.get(testResultApi);
-        console.log(response);
 
         setName(response.data.user.name);
         setGender(response.data.user.grade === '100323' ? '남성' : '여성');
         SetDate(response.data.inspct.registDt.split('T')[0]);
+
+    }, [testResultApi]);
+
+
+
+    const fetchWonScores = useCallback(async () => {
+        const response = await axios.get(testResultApi);
 
         const wonScores = response.data.result.wonScore.split(' ');
         wonScores.pop();
@@ -57,29 +65,71 @@ function TestResult() {
             return a.value - b.value
         });
 
+        const firstHighestNum = sortedWonScoresItems[6].num;
+        const secondHighestNum = sortedWonScoresItems[5].num;
 
-        const FirstHighestNum = sortedWonScoresItems[6].num;
-        const SecondHighestNum = sortedWonScoresItems[5].num;
-
-
-        setFirstHighestScoreNum(FirstHighestNum);
-        setSecondHighestScoreNum(SecondHighestNum);
-
+        setFirstHighestScoreNum(firstHighestNum);
+        setSecondHighestScoreNum(secondHighestNum);
 
     }, [testResultApi]);
 
 
-    const handleRelatedJobs = useCallback(async () => {
-        const response = await axios.get(relatedJobsApi);
-        setRelatedJobsData(response.data);
-        console.log(relatedJobsData);
+    const fetchJobsEducationLevel = useCallback(async () => {
+        const response = await axios.get(jobsEducationLevelApi);
+        console.log(response.data);
 
-    }, [relatedJobsApi, relatedJobsData]);
+        const jobsEducationData = response.data.map((data) => {
+            return (
+                <a href={`http://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=${data[0]}`} key={data[0]}>{data[1]}</a>
+            )
+        }
+        );
+        // const jobsEducationLevelData = jobsEducationLevel.map(([jobSeq, job, index]) => (
+        //     <a href={`http://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=${jobSeq}`}  key={jobSeq}>{job}</a>
+        // ));
+        // console.log(jobsEducationLevelData);
+
+        console.log(jobsEducationData);
+
+    }, [jobsEducationLevelApi]);
+
+    const fetchJobsMajors = useCallback(async () => {
+        const response = await axios.get(jobsMajorsApi);
+        console.log(response.data);
+
+        const jobsMajorsData = response.data.map((data) => {
+            return (
+                <a href={`http://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=${data[0]}`} key={data[0]}>{data[1]}</a>
+            )
+        }
+        );
+        // const jobsEducationLevelData = jobsEducationLevel.map(([jobSeq, job, index]) => (
+        //     <a href={`http://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=${jobSeq}`}  key={jobSeq}>{job}</a>
+        // ));
+        // console.log(jobsEducationLevelData);
+
+        console.log(jobsMajorsData);
+
+    }, [jobsMajorsApi]);
+
 
     useEffect(() => {
-        handleResult();
-        handleRelatedJobs();
-    }, [handleResult, handleRelatedJobs]);
+        fetchUserInfo();
+    }, [fetchUserInfo]);
+
+
+    useEffect(() => {
+        fetchWonScores();
+    }, [fetchWonScores]);
+
+
+    useEffect(() => {
+        fetchJobsEducationLevel();
+    }, [fetchJobsEducationLevel]);
+
+    useEffect(() => {
+        fetchJobsMajors();
+    }, [fetchJobsMajors]);
 
     const styleTitle = {
         width: "auto",
@@ -183,13 +233,25 @@ function TestResult() {
                         </thead>
                         <tbody>
                             <tr>
+                                <td style={styleTdTh}>중학교 졸업 이하</td>
+                                <td style={styleTdTh}>
+                                    업데이트 예정
+                                </td>
+                            </tr>
+                            <tr>
                                 <td style={styleTdTh}>고등학교 졸업</td>
                                 <td style={styleTdTh}>
                                     업데이트 예정
                                 </td>
                             </tr>
                             <tr>
-                                <td style={styleTdTh}>대학교 졸업</td>
+                                <td style={styleTdTh}>고등학교 졸업</td>
+                                <td style={styleTdTh}>
+                                    업데이트 예정
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style={styleTdTh}>전문대학 졸업</td>
                                 <td style={styleTdTh}>
                                     업데이트 예정
                                 </td>
