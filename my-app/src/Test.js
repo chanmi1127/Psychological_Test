@@ -15,6 +15,10 @@ function Test() {
   const apiUrl = `https://www.career.go.kr/inspct/openapi/test/questions?apikey=${process.env.REACT_APP_API_KEY}&q=6`;
   const postApiUrl = 'http://www.career.go.kr/inspct/openapi/test/report';
   const history = useHistory();
+  const jobValues = ['능력발휘', '자율성', '보수', '안정성', '사회적 인정', '사회봉사', '자기계발', '창의성'];
+  const jobValueDescriptions = ['직업을 통해 자신의 능력을 발휘하는 것', '일하는 시간과 방식에 대해서 스스로 결정할 수 있는 것', '직업을 통해 많은 돈을 버는 것', '한 직장에서 오랫동안 일할 수 있는 것',
+    '내가 한 일을 다른 사람에게 인정받는 것', '다른 사람들에게 도움이 되는 일을 하는 것', '직업을 통해 더 배우고 발전할 기회가 있는 것', '스스로 아이디어를 내어 새로운 일을 해볼 수 있는 것'];
+
 
   const handleNameChange = (e) => {
     setName(e.target.value);
@@ -30,7 +34,7 @@ function Test() {
     setSampleAnswer01(response.data.RESULT[1].answer01);
     setSampleAnswer02(response.data.RESULT[1].answer02);
   }, [apiUrl]);
-  
+
   const fetchQuestions = useCallback(async () => {
     const response = await axios.get(apiUrl);
     setQuestions(response.data.RESULT);
@@ -94,15 +98,23 @@ function Test() {
     const handlePost = async () => {
       const response = await axios.post(postApiUrl, data, { headers: { 'Content-Type': 'application/json' } });
       const seq = response.data.RESULT.url.split("=")[1];
-      
-      seq && 
-      history.push('/testfinished/' + seq);
+
+      seq &&
+        history.push('/testfinished/' + seq);
 
     };
 
     handlePost();
 
   };
+
+  const styleJobValueDesc = {
+    display: "flex",
+    justifyContent: "center",
+    fontSize: "1rem",
+    fontWeight: "400",
+    padding: "2em"
+};
 
   const styleTitle = {
     width: "auto",
@@ -222,7 +234,7 @@ function Test() {
                             name={`B[${qitemNo}]`}
                             value={question.answerScore01}
                             onChange={handleAnswerScoreChange(question.qitemNo)}
-                            checked = {answers[question.qitemNo -1] === question.answerScore01? true : false }
+                            checked={answers[question.qitemNo - 1] === question.answerScore01 ? true : false}
                           />
                           {question.answer01}
                         </label>
@@ -232,10 +244,14 @@ function Test() {
                             name={`B[${qitemNo}]`}
                             value={question.answerScore02}
                             onChange={handleAnswerScoreChange(question.qitemNo)}
-                            checked = {answers[question.qitemNo -1] === question.answerScore02? true : false }
+                            checked={answers[question.qitemNo - 1] === question.answerScore02 ? true : false}
                           />
                           {question.answer02}
                         </label>
+                      </div>
+                      <div style={styleJobValueDesc}>
+                        {jobValues[jobValues.indexOf(question.answer01)]}{': '}{jobValueDescriptions[jobValues.indexOf(question.answer01)]} <br />
+                        {jobValues[jobValues.indexOf(question.answer02)]}{': '}{jobValueDescriptions[jobValues.indexOf(question.answer02)]}
                       </div>
                     </div>
                   );
