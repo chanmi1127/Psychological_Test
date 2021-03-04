@@ -17,12 +17,10 @@ function Test() {
   const history = useHistory();
 
   const handleNameChange = (e) => {
-    console.log(e.target.value);
     setName(e.target.value);
   };
 
   const handleGenderChange = (e) => {
-    console.log(e.target.value);
     setGender(e.target.value);
   };
 
@@ -95,10 +93,9 @@ function Test() {
 
     const handlePost = async () => {
       const response = await axios.post(postApiUrl, data, { headers: { 'Content-Type': 'application/json' } });
-      console.log(response);
       const seq = response.data.RESULT.url.split("=")[1];
-      console.log(seq);
-
+      
+      seq && 
       history.push('/testfinished/' + seq);
 
     };
@@ -189,7 +186,7 @@ function Test() {
               <label><input type="radio" name="sampleAnswer" />{sampleAnswer02}</label><br />
               <div class="form-group row">
                 <div class="col-md-6">
-                  <Button class="btn form-control" variant="outline-primary" size="lg" onClick={() => {
+                  <Button type="button" class="btn form-control" variant="outline-primary" size="lg" onClick={() => {
                     setPage((current) => {
                       return current - 1;
                     });
@@ -198,7 +195,7 @@ function Test() {
                   </Button>
                 </div>
                 <div class="col-md-6">
-                  <Button class="btn form-control" variant="outline-primary" size="lg" onClick={() => {
+                  <Button type="button" class="btn form-control" variant="outline-primary" size="lg" onClick={() => {
                     setPage((current) => {
                       return current + 1;
                     });
@@ -225,6 +222,7 @@ function Test() {
                             name={`B[${qitemNo}]`}
                             value={question.answerScore01}
                             onChange={handleAnswerScoreChange(question.qitemNo)}
+                            checked = {answers[question.qitemNo -1] === question.answerScore01? true : false }
                           />
                           {question.answer01}
                         </label>
@@ -234,6 +232,7 @@ function Test() {
                             name={`B[${qitemNo}]`}
                             value={question.answerScore02}
                             onChange={handleAnswerScoreChange(question.qitemNo)}
+                            checked = {answers[question.qitemNo -1] === question.answerScore02? true : false }
                           />
                           {question.answer02}
                         </label>
@@ -246,7 +245,7 @@ function Test() {
               <div style={styleAnswer}>
                 <div class="form-group row">
                   <div class="col-md-6">
-                    <Button class="btn form-control" variant="outline-primary" size="lg"
+                    <Button type="button" class="btn form-control" variant="outline-primary" size="lg"
                       onClick={() => {
                         setPage((current) => {
                           return current - 1;
@@ -258,7 +257,7 @@ function Test() {
                   </div>
                   {page < 5 ? (
                     <div class="col-md-6">
-                      <Button class="btn form-control" variant="outline-primary" size="lg"
+                      <Button type="button" class="btn form-control" variant="outline-primary" size="lg"
                         onClick={() => {
                           setPage((current) => {
                             return current + 1;

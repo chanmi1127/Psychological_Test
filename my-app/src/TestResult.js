@@ -1,17 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { Chart } from "react-google-charts";
-
-
-
-// ! 참고
-// report 
-// https://inspct.career.go.kr/inspct/api/psycho/report?seq=seq값
-// majors
-// https://inspct.career.go.kr/inspct/api/psycho/value/majors?no1=5&no2=4
-// jobs
-// https://inspct.career.go.kr/inspct/api/psycho/value/jobs?no1=5&no2=4
+import Button from 'react-bootstrap/Button';
 
 
 function TestResult() {
@@ -23,10 +14,20 @@ function TestResult() {
     const [date, SetDate] = useState('');
     const [firstHighestScoreNum, setFirstHighestScoreNum] = useState(null);
     const [secondHighestScoreNum, setSecondHighestScoreNum] = useState(null);
-    const jobsEducationLevelApi = `https://inspct.career.go.kr/inspct/api/psycho/value/jobs?no1=${firstHighestScoreNum}&no2=${secondHighestScoreNum}`;
-    const jobsMajorsApi = `https://inspct.career.go.kr/inspct/api/psycho/value/jobs?no1=${firstHighestScoreNum}&no2=${secondHighestScoreNum}`;
-
-
+    const [firstLowestScoreNum, setFirstLowestScoreNum] = useState(null);
+    const [secondLowestScoreNum, setSecondLowestScoreNum] = useState(null);
+    const [resultChartData, setResultChartData] = useState();
+    const jobValues = ['능력발휘', '자율성', '보수', '안정성', '사회적 인정', '사회봉사', '자기계발', '창의성'];
+    const educationLevelNames = ['중졸 이하', '고졸', '전문대졸', '대졸', '대학원졸'];
+    const majorNames = ['계열 무관', '인문', '사회', '교육', '공학', '자연', '의학', '예체능'];
+    const [educationLevels, setEducationLevels] = useState(null);
+    const [majors, setMajors] = useState(null);
+    const jobsEducationLevelApi = useMemo(() => {
+        return `https://inspct.career.go.kr/inspct/api/psycho/value/jobs?no1=${firstHighestScoreNum}&no2=${secondHighestScoreNum}`
+    }, [firstHighestScoreNum, secondHighestScoreNum])
+    const jobsMajorsApi = useMemo(() => {
+        return `https://inspct.career.go.kr/inspct/api/psycho/value/jobs?no1=${firstHighestScoreNum}&no2=${secondHighestScoreNum}`
+    }, [firstHighestScoreNum, secondHighestScoreNum])
 
     const fetchUserInfo = useCallback(async () => {
         const response = await axios.get(testResultApi);
@@ -36,7 +37,6 @@ function TestResult() {
         SetDate(response.data.inspct.registDt.split('T')[0]);
 
     }, [testResultApi]);
-
 
 
     const fetchWonScores = useCallback(async () => {
@@ -67,49 +67,40 @@ function TestResult() {
 
         const firstHighestNum = sortedWonScoresItems[6].num;
         const secondHighestNum = sortedWonScoresItems[5].num;
+        const firstLowestNum = sortedWonScoresItems[0].num;
+        const secondLowestNum = sortedWonScoresItems[1].num;
 
         setFirstHighestScoreNum(firstHighestNum);
         setSecondHighestScoreNum(secondHighestNum);
+        setFirstLowestScoreNum(firstLowestNum);
+        setSecondLowestScoreNum(secondLowestNum);
 
-    }, [testResultApi]);
+        const chartData = [
+            ['직업가치관', '점수'],
+            ['능력발휘', scores[0]],
+            ['보수', scores[1]],
+            ['안정성', scores[2]],
+            ['사회적 인정', scores[3]],
+            ['사회봉사', scores[4]],
+            ['자기계발', scores[5]],
+            ['창의성', scores[6]],
+        ];
+
+        setResultChartData(chartData);
+
+    }, [testResultApi, scores]);
 
 
     const fetchJobsEducationLevel = useCallback(async () => {
         const response = await axios.get(jobsEducationLevelApi);
         console.log(response.data);
-
-        const jobsEducationData = response.data.map((data) => {
-            return (
-                <a href={`http://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=${data[0]}`} key={data[0]}>{data[1]}</a>
-            )
-        }
-        );
-        // const jobsEducationLevelData = jobsEducationLevel.map(([jobSeq, job, index]) => (
-        //     <a href={`http://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=${jobSeq}`}  key={jobSeq}>{job}</a>
-        // ));
-        // console.log(jobsEducationLevelData);
-
-        console.log(jobsEducationData);
-
+        setEducationLevels(response.data);
     }, [jobsEducationLevelApi]);
 
     const fetchJobsMajors = useCallback(async () => {
         const response = await axios.get(jobsMajorsApi);
         console.log(response.data);
-
-        const jobsMajorsData = response.data.map((data) => {
-            return (
-                <a href={`http://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=${data[0]}`} key={data[0]}>{data[1]}</a>
-            )
-        }
-        );
-        // const jobsEducationLevelData = jobsEducationLevel.map(([jobSeq, job, index]) => (
-        //     <a href={`http://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=${jobSeq}`}  key={jobSeq}>{job}</a>
-        // ));
-        // console.log(jobsEducationLevelData);
-
-        console.log(jobsMajorsData);
-
+        setMajors(response.data);
     }, [jobsMajorsApi]);
 
 
@@ -139,9 +130,17 @@ function TestResult() {
         padding: "1em"
     };
 
-    const styleSubTitle = {
+    const styleMainTitle = {
         width: "auto",
         fontSize: "2rem",
+        textAlign: "center",
+        fontWeight: "400",
+        padding: "1em"
+    };
+
+    const styleSubTitle = {
+        width: "auto",
+        fontSize: "1.75rem",
         textAlign: "center",
         fontWeight: "400",
         padding: "0 1em"
@@ -157,7 +156,8 @@ function TestResult() {
 
     const styleDiv = {
         display: "flex",
-        justifyContent: "center"
+        justifyContent: "center",
+        padding: "2em"
     };
 
     const styleTable = {
@@ -198,30 +198,24 @@ function TestResult() {
                 </table>
             </div>
             <div>
-                <div style={styleTitle}>1. 직업가치관 검사 결과 </div>
+                <div style={styleMainTitle}>1. 직업가치관 검사 결과 </div>
                 <div style={styleSubTitle}>직업가치관 검사 결과 그래프</div>
+                <div style={styleContent}>
+                    직업생활과 관련하여 {name}님은 {firstHighestScoreNum && jobValues[firstHighestScoreNum - 1]}과(와) {secondHighestScoreNum && jobValues[secondHighestScoreNum - 1]}을(를) 가장 중요하게 생각합니다.
+                    반면에 {firstLowestScoreNum && jobValues[firstLowestScoreNum - 1]}, {secondLowestScoreNum && jobValues[secondLowestScoreNum - 1]}은(는) 상대적으로 덜 중요하게 생각합니다.
+                </div>
                 <div style={styleDiv}>
                     <Chart
-                        width={'600px'}
-                        height={'400px'}
+                        width={'800px'}
+                        height={'600px'}
                         chartType="Bar"
                         loader={<div>Loading Chart</div>}
-                        data={[
-                            ['직업가치관', '점수'],
-                            ['능력발휘', scores[0]],
-                            ['보수', scores[1]],
-                            ['안정성', scores[2]],
-                            ['사회적 인정', scores[3]],
-                            ['사회봉사', scores[4]],
-                            ['자기계발', scores[5]],
-                            ['창의성', scores[6]],
-                        ]}
-                        rootProps={{ 'data-testid': '1' }}
+                        data={resultChartData && resultChartData}
                     />
                 </div>
             </div>
             <div>
-                <div style={styleTitle}>2. 가치관과 관련이 높은 직업</div>
+                <div style={styleMainTitle}>2. 가치관과 관련이 높은 직업</div>
                 <div style={styleSubTitle}>종사자 평균 학력별</div>
                 <div style={styleDiv}>
                     <table style={styleTable}>
@@ -232,39 +226,77 @@ function TestResult() {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td style={styleTdTh}>중학교 졸업 이하</td>
-                                <td style={styleTdTh}>
-                                    업데이트 예정
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style={styleTdTh}>고등학교 졸업</td>
-                                <td style={styleTdTh}>
-                                    업데이트 예정
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style={styleTdTh}>고등학교 졸업</td>
-                                <td style={styleTdTh}>
-                                    업데이트 예정
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style={styleTdTh}>전문대학 졸업</td>
-                                <td style={styleTdTh}>
-                                    업데이트 예정
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style={styleTdTh}>대학원 졸업</td>
-                                <td style={styleTdTh}>
-                                    업데이트 예정
-                                </td>
-                            </tr>
+                            {educationLevelNames.map((educationLevel, educationIndex) => {
+                                const jobsByEducationLevels = educationLevels &&
+                                    educationLevels.filter((educationLevel) => {
+                                        return educationLevel[2] === educationIndex + 1;
+                                    });
+
+                                return (
+                                    <tr style={jobsByEducationLevels && jobsByEducationLevels.length < 1 ? { display: "none" } : {}}>
+                                        <td style={styleTdTh}>
+                                            {educationLevel}
+                                        </td>
+                                        <td style={styleTdTh}>
+                                            {jobsByEducationLevels &&
+                                                jobsByEducationLevels.map((job) => {
+                                                    return (
+                                                        <a href={`https://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=${job[0]}`}>
+                                                            {job[1]}{' '}
+                                                        </a>
+                                                    );
+                                                })}
+                                        </td>
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </table>
                 </div>
+                <div style={styleSubTitle}>종사자 평균 전공별</div>
+                <div style={styleDiv}>
+                    <table style={styleTable}>
+                        <thead>
+                            <tr>
+                                <th style={styleTdTh}>분야</th>
+                                <th style={styleTdTh}>직업</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {majorNames.map((major, majorIndex) => {
+                                const jobsByMajors = majors &&
+                                    majors.filter((major) => {
+                                        return major[2] === majorIndex;
+                                    });
+
+                                return (
+                                    <tr style={jobsByMajors && jobsByMajors.length < 1 ? { display: "none" } : {}}>
+                                        <td style={styleTdTh}>
+                                            {major}
+                                        </td>
+                                        <td style={styleTdTh}>
+                                            {jobsByMajors &&
+                                                jobsByMajors.map((job) => {
+                                                    return (
+                                                        <a href={`https://www.career.go.kr/cnet/front/base/job/jobView.do?SEQ=${job[0]}`}>
+                                                            {job[1]}{' '}
+                                                        </a>
+                                                    );
+                                                })}
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div style={styleDiv}>
+                <Link to="/">
+                    <Button variant="outline-primary" size="lg">
+                        다시 검사하기
+                    </Button>
+                </Link>
             </div>
         </div>
     );
