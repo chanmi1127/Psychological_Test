@@ -58,15 +58,16 @@ function TestResult() {
             { num: 4, value: newWonScores[3] },
             { num: 5, value: newWonScores[4] },
             { num: 6, value: newWonScores[5] },
-            { num: 7, value: newWonScores[6] }
+            { num: 7, value: newWonScores[6] },
+            { num: 8, value: newWonScores[7] }
         ];
 
         const sortedWonScoresItems = WonScoresItems.sort(function (a, b) {
             return a.value - b.value
         });
 
-        const firstHighestNum = sortedWonScoresItems[6].num;
-        const secondHighestNum = sortedWonScoresItems[5].num;
+        const firstHighestNum = sortedWonScoresItems[7].num;
+        const secondHighestNum = sortedWonScoresItems[6].num;
         const firstLowestNum = sortedWonScoresItems[0].num;
         const secondLowestNum = sortedWonScoresItems[1].num;
 
@@ -78,12 +79,13 @@ function TestResult() {
         const chartData = [
             ['직업가치관', '점수'],
             ['능력발휘', scores[0]],
-            ['보수', scores[1]],
-            ['안정성', scores[2]],
-            ['사회적 인정', scores[3]],
-            ['사회봉사', scores[4]],
-            ['자기계발', scores[5]],
-            ['창의성', scores[6]],
+            ['자율성', scores[1]],
+            ['보수', scores[2]],
+            ['안정성', scores[3]],
+            ['사회적 인정', scores[4]],
+            ['사회봉사', scores[5]],
+            ['자기계발', scores[6]],
+            ['창의성', scores[7]],
         ];
 
         setResultChartData(chartData);

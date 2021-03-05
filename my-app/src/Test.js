@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
-import Button from 'react-bootstrap/Button';
+import { Accordion, Button, Card } from "react-bootstrap";
 
 function Test() {
   const [name, setName] = useState('');
@@ -15,6 +15,10 @@ function Test() {
   const apiUrl = `https://www.career.go.kr/inspct/openapi/test/questions?apikey=${process.env.REACT_APP_API_KEY}&q=6`;
   const postApiUrl = 'http://www.career.go.kr/inspct/openapi/test/report';
   const history = useHistory();
+  const jobValues = ['능력발휘', '자율성', '보수', '안정성', '사회적 인정', '사회봉사', '자기계발', '창의성'];
+  const jobValueDescriptions = ['직업을 통해 자신의 능력을 발휘하는 것', '일하는 시간과 방식에 대해서 스스로 결정할 수 있는 것', '직업을 통해 많은 돈을 버는 것', '한 직장에서 오랫동안 일할 수 있는 것',
+    '내가 한 일을 다른 사람에게 인정받는 것', '다른 사람들에게 도움이 되는 일을 하는 것', '직업을 통해 더 배우고 발전할 기회가 있는 것', '스스로 아이디어를 내어 새로운 일을 해볼 수 있는 것'];
+
 
   const handleNameChange = (e) => {
     setName(e.target.value);
@@ -30,7 +34,7 @@ function Test() {
     setSampleAnswer01(response.data.RESULT[1].answer01);
     setSampleAnswer02(response.data.RESULT[1].answer02);
   }, [apiUrl]);
-  
+
   const fetchQuestions = useCallback(async () => {
     const response = await axios.get(apiUrl);
     setQuestions(response.data.RESULT);
@@ -94,14 +98,30 @@ function Test() {
     const handlePost = async () => {
       const response = await axios.post(postApiUrl, data, { headers: { 'Content-Type': 'application/json' } });
       const seq = response.data.RESULT.url.split("=")[1];
-      
-      seq && 
-      history.push('/testfinished/' + seq);
+
+      seq &&
+        history.push('/testfinished/' + seq);
 
     };
 
     handlePost();
 
+  };
+
+  const styleContainer = {
+    width: "100%",
+    maxWidth: "1200px",
+    margin: "0 auto"
+  };
+
+  const styleJobValueDesc = {
+    width: "33%",
+    maxWidth: "200px",
+    textAlign: "left",
+    fontSize: "1rem",
+    fontWeight: "400",
+    margin: "0 auto",
+    padding: "1em"
   };
 
   const styleTitle = {
@@ -116,7 +136,7 @@ function Test() {
     width: "auto",
     fontSize: "1.5rem",
     textAlign: "center",
-    fontWeight: "360",
+    fontWeight: "400",
     padding: "1em 2em"
   };
 
@@ -126,6 +146,14 @@ function Test() {
     textAlign: "center",
     fontWeight: "360",
     padding: "1em"
+  };
+
+  const styleExplanation = {
+    width: "auto",
+    fontSize: "1.25rem",
+    textAlign: "center",
+    fontWeight: "400",
+    padding: "2em"
   };
 
   const styleQuestion = {
@@ -146,7 +174,7 @@ function Test() {
 
   return (
     page === -2 ? (
-      <div>
+      <div style={styleContainer} >
         <div>
           <div style={styleTitle}>직업가치관 검사</div>
           <div style={styleContent}>
@@ -174,7 +202,7 @@ function Test() {
       </div>
     ) : (
         page < 0 ? (
-          <div>
+          <div style={styleContainer}>
             <div style={styleTitle}>직업가치관 검사</div>
             <div style={styleQuestion}>
               <p>[검사 예시]</p>
@@ -184,6 +212,22 @@ function Test() {
             <div style={styleAnswer}>
               <label style={{ marginRight: "2em" }}><input type="radio" name="sampleAnswer" />{sampleAnswer01}</label>
               <label><input type="radio" name="sampleAnswer" />{sampleAnswer02}</label><br />
+              <Accordion style={styleJobValueDesc}>
+                <Card>
+                  <Card.Header>
+                    <Accordion.Toggle as={Button} variant="link" eventKey="0">
+                      직업가치 설명 보기
+                    </Accordion.Toggle>
+                  </Card.Header>
+                  <Accordion.Collapse eventKey="0">
+                    <Card.Body>
+                      {jobValues[jobValues.indexOf(sampleAnswer01)]}{': '}{jobValueDescriptions[jobValues.indexOf(sampleAnswer01)]} <br />
+                      {jobValues[jobValues.indexOf(sampleAnswer02)]}{': '}{jobValueDescriptions[jobValues.indexOf(sampleAnswer02)]}
+                    </Card.Body>
+                  </Accordion.Collapse>
+                </Card>
+              </Accordion>
+              <div style={styleExplanation}> Tip: '직업가치 설명 보기'를 클릭하면 직업가치의 정의를 확인할 수 있습니다. </div>
               <div class="form-group row">
                 <div class="col-md-6">
                   <Button type="button" class="btn form-control" variant="outline-primary" size="lg" onClick={() => {
@@ -207,14 +251,14 @@ function Test() {
             </div>
           </div>
         ) : (
-            <div>
+            <div style={styleContainer}>
               <div style={styleTitle}>직업가치관 검사 진행</div>
               <div>
                 {visibleQuestions.map((question) => {
                   const qitemNo = parseInt(question.qitemNo, 10);
                   return (
                     <div key={qitemNo}>
-                      <div style={styleQuestion}>{question.question}</div>
+                      <div style={styleQuestion}>{qitemNo}{'. '}{question.question}</div>
                       <div style={styleAnswer}>
                         <label style={{ marginRight: "2em" }}>
                           <input
@@ -222,7 +266,7 @@ function Test() {
                             name={`B[${qitemNo}]`}
                             value={question.answerScore01}
                             onChange={handleAnswerScoreChange(question.qitemNo)}
-                            checked = {answers[question.qitemNo -1] === question.answerScore01? true : false }
+                            checked={answers[question.qitemNo - 1] === question.answerScore01 ? true : false}
                           />
                           {question.answer01}
                         </label>
@@ -232,10 +276,25 @@ function Test() {
                             name={`B[${qitemNo}]`}
                             value={question.answerScore02}
                             onChange={handleAnswerScoreChange(question.qitemNo)}
-                            checked = {answers[question.qitemNo -1] === question.answerScore02? true : false }
+                            checked={answers[question.qitemNo - 1] === question.answerScore02 ? true : false}
                           />
                           {question.answer02}
                         </label>
+                        <Accordion style={styleJobValueDesc}>
+                          <Card>
+                            <Card.Header>
+                              <Accordion.Toggle as={Button} variant="link" eventKey="0" size="sm" >
+                                직업가치 설명 보기
+                              </Accordion.Toggle>
+                            </Card.Header>
+                            <Accordion.Collapse eventKey="0">
+                              <Card.Body>
+                                {jobValues[jobValues.indexOf(question.answer01)]}{': '}{jobValueDescriptions[jobValues.indexOf(question.answer01)]} <br />
+                                {jobValues[jobValues.indexOf(question.answer02)]}{': '}{jobValueDescriptions[jobValues.indexOf(question.answer02)]}
+                              </Card.Body>
+                            </Accordion.Collapse>
+                          </Card>
+                        </Accordion>
                       </div>
                     </div>
                   );
