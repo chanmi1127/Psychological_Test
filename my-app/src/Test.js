@@ -9,6 +9,7 @@ function Test() {
   const [sampleQuestion, setSampleQuestion] = useState('');
   const [sampleAnswer01, setSampleAnswer01] = useState('');
   const [sampleAnswer02, setSampleAnswer02] = useState('');
+  // const [sampleAnswerValue, setSampleAnswerValue] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState([]);
   const [page, setPage] = useState(-2);
