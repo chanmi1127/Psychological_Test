@@ -108,12 +108,20 @@ function Test() {
 
   };
 
+  const styleContainer = {
+    width: "100%",
+    maxWidth: "1200px",
+    margin: "0 auto"
+  };
+
   const styleJobValueDesc = {
-    display: "flex",
+    width: "33%",
+    maxWidth: "200px",
     textAlign: "left",
     fontSize: "1rem",
     fontWeight: "400",
-    padding: "1em 2em 2em 60em"
+    margin: "0 auto",
+    padding: "1em"
   };
 
   const styleTitle = {
@@ -128,7 +136,7 @@ function Test() {
     width: "auto",
     fontSize: "1.5rem",
     textAlign: "center",
-    fontWeight: "360",
+    fontWeight: "400",
     padding: "1em 2em"
   };
 
@@ -138,6 +146,14 @@ function Test() {
     textAlign: "center",
     fontWeight: "360",
     padding: "1em"
+  };
+
+  const styleExplanation = {
+    width: "auto",
+    fontSize: "1.25rem",
+    textAlign: "center",
+    fontWeight: "400",
+    padding: "2em"
   };
 
   const styleQuestion = {
@@ -158,7 +174,7 @@ function Test() {
 
   return (
     page === -2 ? (
-      <div>
+      <div style={styleContainer} >
         <div>
           <div style={styleTitle}>직업가치관 검사</div>
           <div style={styleContent}>
@@ -186,7 +202,7 @@ function Test() {
       </div>
     ) : (
         page < 0 ? (
-          <div>
+          <div style={styleContainer}>
             <div style={styleTitle}>직업가치관 검사</div>
             <div style={styleQuestion}>
               <p>[검사 예시]</p>
@@ -196,6 +212,22 @@ function Test() {
             <div style={styleAnswer}>
               <label style={{ marginRight: "2em" }}><input type="radio" name="sampleAnswer" />{sampleAnswer01}</label>
               <label><input type="radio" name="sampleAnswer" />{sampleAnswer02}</label><br />
+              <Accordion style={styleJobValueDesc}>
+                <Card>
+                  <Card.Header>
+                    <Accordion.Toggle as={Button} variant="link" eventKey="0">
+                      직업가치 설명 보기
+                    </Accordion.Toggle>
+                  </Card.Header>
+                  <Accordion.Collapse eventKey="0">
+                    <Card.Body>
+                      {jobValues[jobValues.indexOf(sampleAnswer01)]}{': '}{jobValueDescriptions[jobValues.indexOf(sampleAnswer01)]} <br />
+                      {jobValues[jobValues.indexOf(sampleAnswer02)]}{': '}{jobValueDescriptions[jobValues.indexOf(sampleAnswer02)]}
+                    </Card.Body>
+                  </Accordion.Collapse>
+                </Card>
+              </Accordion>
+              <div style={styleExplanation}> Tip: '직업가치 설명 보기'를 클릭하면 직업가치의 정의를 확인할 수 있습니다. </div>
               <div class="form-group row">
                 <div class="col-md-6">
                   <Button type="button" class="btn form-control" variant="outline-primary" size="lg" onClick={() => {
@@ -219,7 +251,7 @@ function Test() {
             </div>
           </div>
         ) : (
-            <div>
+            <div style={styleContainer}>
               <div style={styleTitle}>직업가치관 검사 진행</div>
               <div>
                 {visibleQuestions.map((question) => {
