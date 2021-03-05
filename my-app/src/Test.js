@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
-import { Accordion, Button, Card } from "react-bootstrap";
+import { Alert, Button} from "react-bootstrap";
 
 function Test() {
   const [name, setName] = useState('');
@@ -9,17 +9,15 @@ function Test() {
   const [sampleQuestion, setSampleQuestion] = useState('');
   const [sampleAnswer01, setSampleAnswer01] = useState('');
   const [sampleAnswer02, setSampleAnswer02] = useState('');
-  // const [sampleAnswerValue, setSampleAnswerValue] = useState(null);
+  const [sampleAnswerDesc01, setSampleAnswerDesc01] = useState('');
+  const [sampleAnswerDesc02, setSampleAnswerDesc02] = useState('');
+  const [sampleAnswerValue, setSampleAnswerValue] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState([]);
   const [page, setPage] = useState(-2);
   const apiUrl = `https://www.career.go.kr/inspct/openapi/test/questions?apikey=${process.env.REACT_APP_API_KEY}&q=6`;
   const postApiUrl = 'http://www.career.go.kr/inspct/openapi/test/report';
   const history = useHistory();
-  const jobValues = ['능력발휘', '자율성', '보수', '안정성', '사회적 인정', '사회봉사', '자기계발', '창의성'];
-  const jobValueDescriptions = ['직업을 통해 자신의 능력을 발휘하는 것', '일하는 시간과 방식에 대해서 스스로 결정할 수 있는 것', '직업을 통해 많은 돈을 버는 것', '한 직장에서 오랫동안 일할 수 있는 것',
-    '내가 한 일을 다른 사람에게 인정받는 것', '다른 사람들에게 도움이 되는 일을 하는 것', '직업을 통해 더 배우고 발전할 기회가 있는 것', '스스로 아이디어를 내어 새로운 일을 해볼 수 있는 것'];
-
 
   const handleNameChange = (e) => {
     setName(e.target.value);
@@ -34,6 +32,8 @@ function Test() {
     setSampleQuestion(response.data.RESULT[1].question);
     setSampleAnswer01(response.data.RESULT[1].answer01);
     setSampleAnswer02(response.data.RESULT[1].answer02);
+    setSampleAnswerDesc01(response.data.RESULT[1].answer03);
+    setSampleAnswerDesc02(response.data.RESULT[1].answer04);
   }, [apiUrl]);
 
   const fetchQuestions = useCallback(async () => {
@@ -115,16 +115,6 @@ function Test() {
     margin: "0 auto"
   };
 
-  const styleJobValueDesc = {
-    width: "33%",
-    maxWidth: "200px",
-    textAlign: "left",
-    fontSize: "1rem",
-    fontWeight: "400",
-    margin: "0 auto",
-    padding: "1em"
-  };
-
   const styleTitle = {
     width: "auto",
     fontSize: "2.5rem",
@@ -150,11 +140,12 @@ function Test() {
   };
 
   const styleExplanation = {
-    width: "auto",
+    width: "60%",
     fontSize: "1.25rem",
-    textAlign: "center",
+    textAlign: "left",
     fontWeight: "400",
-    padding: "2em"
+    padding: "0.5em",
+    margin: "0 auto"
   };
 
   const styleQuestion = {
@@ -204,31 +195,22 @@ function Test() {
     ) : (
         page < 0 ? (
           <div style={styleContainer}>
-            <div style={styleTitle}>직업가치관 검사</div>
+            <div style={styleTitle}>직업가치관 검사 예시</div>
             <div style={styleQuestion}>
-              <p>[검사 예시]</p>
               직업과 관련된 두개의 가치 중에서 자기에게 더 중요한 가치에 표시하세요.<br />
-              {sampleQuestion}<br />
+              가치의 뜻을 잘 모르겠다면 문항 아래에 있는 가치의 설명을 확인해보세요. <br /> <br />
+              <p>[검사 예시]</p>
+              {sampleQuestion}
             </div>
             <div style={styleAnswer}>
-              <label style={{ marginRight: "2em" }}><input type="radio" name="sampleAnswer" />{sampleAnswer01}</label>
-              <label><input type="radio" name="sampleAnswer" />{sampleAnswer02}</label><br />
-              <Accordion style={styleJobValueDesc}>
-                <Card>
-                  <Card.Header>
-                    <Accordion.Toggle as={Button} variant="link" eventKey="0">
-                      직업가치 설명 보기
-                    </Accordion.Toggle>
-                  </Card.Header>
-                  <Accordion.Collapse eventKey="0">
-                    <Card.Body>
-                      {jobValues[jobValues.indexOf(sampleAnswer01)]}{': '}{jobValueDescriptions[jobValues.indexOf(sampleAnswer01)]} <br />
-                      {jobValues[jobValues.indexOf(sampleAnswer02)]}{': '}{jobValueDescriptions[jobValues.indexOf(sampleAnswer02)]}
-                    </Card.Body>
-                  </Accordion.Collapse>
-                </Card>
-              </Accordion>
-              <div style={styleExplanation}> Tip: '직업가치 설명 보기'를 클릭하면 직업가치의 정의를 확인할 수 있습니다. </div>
+              <label style={{ marginRight: "2em" }}><input type="radio" name="sampleAnswer" onChange={(e) => setSampleAnswerValue(e.target.value)} />{sampleAnswer01}</label>
+              <label><input type="radio" name="sampleAnswer" onChange={(e) => setSampleAnswerValue(e.target.value)} />{sampleAnswer02}</label><br />
+              <div style={styleExplanation}>
+                <Alert variant="info">
+                  {sampleAnswer01}{': '}{sampleAnswerDesc01} <br />
+                  {sampleAnswer02}{': '}{sampleAnswerDesc02}
+                </Alert>
+              </div>
               <div class="form-group row">
                 <div class="col-md-6">
                   <Button type="button" class="btn form-control" variant="outline-primary" size="lg" onClick={() => {
@@ -244,7 +226,8 @@ function Test() {
                     setPage((current) => {
                       return current + 1;
                     });
-                  }}>
+                  }}
+                    disabled={!sampleAnswerValue}>
                     검사 시작
                   </Button>
                 </div>
@@ -281,21 +264,12 @@ function Test() {
                           />
                           {question.answer02}
                         </label>
-                        <Accordion style={styleJobValueDesc}>
-                          <Card>
-                            <Card.Header>
-                              <Accordion.Toggle as={Button} variant="link" eventKey="0" size="sm" >
-                                직업가치 설명 보기
-                              </Accordion.Toggle>
-                            </Card.Header>
-                            <Accordion.Collapse eventKey="0">
-                              <Card.Body>
-                                {jobValues[jobValues.indexOf(question.answer01)]}{': '}{jobValueDescriptions[jobValues.indexOf(question.answer01)]} <br />
-                                {jobValues[jobValues.indexOf(question.answer02)]}{': '}{jobValueDescriptions[jobValues.indexOf(question.answer02)]}
-                              </Card.Body>
-                            </Accordion.Collapse>
-                          </Card>
-                        </Accordion>
+                        <div style={styleExplanation}>
+                          <Alert variant="info">
+                            {question.answer01}{': '}{question.answer03} <br />
+                            {question.answer02}{': '}{question.answer04}
+                          </Alert>
+                        </div>
                       </div>
                     </div>
                   );
