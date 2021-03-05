@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
-import { Alert, Button} from "react-bootstrap";
+import { Alert, Button } from "react-bootstrap";
 
 function Test() {
   const [name, setName] = useState('');
@@ -195,11 +195,12 @@ function Test() {
     ) : (
         page < 0 ? (
           <div style={styleContainer}>
-            <div style={styleTitle}>직업가치관 검사 예시</div>
+            <div style={styleTitle}>직업가치관 검사</div>
             <div style={styleQuestion}>
-              직업과 관련된 두개의 가치 중에서 자기에게 더 중요한 가치에 표시하세요.<br />
-              가치의 뜻을 잘 모르겠다면 문항 아래에 있는 가치의 설명을 확인해보세요. <br /> <br />
-              <p>[검사 예시]</p>
+                본 직업가치관 검사는 총 28문항으로 구성되어있습니다. <br />
+                각 문항에서 직업과 관련된 두개의 가치 중 자기에게 더 중요한 가치에 표시하세요.<br />
+                가치의 뜻을 잘 모르겠다면 문항 아래에 있는 가치의 설명을 확인해보세요. <br /><br />
+              <p style={{fontWeight: "500"}}>[검사 예시]</p>
               {sampleQuestion}
             </div>
             <div style={styleAnswer}>
