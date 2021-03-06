@@ -1,24 +1,25 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
-import { Accordion, Button, Card } from "react-bootstrap";
+import { Alert, Button, ProgressBar } from "react-bootstrap";
 
 function Test() {
   const [name, setName] = useState('');
+  const [nameValidationMsg, setNameValidationMsg] = useState('');
+  const [genderValidationMsg, setGenderValidationMsg] = useState('');
   const [gender, setGender] = useState('');
   const [sampleQuestion, setSampleQuestion] = useState('');
   const [sampleAnswer01, setSampleAnswer01] = useState('');
   const [sampleAnswer02, setSampleAnswer02] = useState('');
+  const [sampleAnswerDesc01, setSampleAnswerDesc01] = useState('');
+  const [sampleAnswerDesc02, setSampleAnswerDesc02] = useState('');
+  const [sampleAnswerValue, setSampleAnswerValue] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState([]);
   const [page, setPage] = useState(-2);
   const apiUrl = `https://www.career.go.kr/inspct/openapi/test/questions?apikey=${process.env.REACT_APP_API_KEY}&q=6`;
   const postApiUrl = 'http://www.career.go.kr/inspct/openapi/test/report';
   const history = useHistory();
-  const jobValues = ['능력발휘', '자율성', '보수', '안정성', '사회적 인정', '사회봉사', '자기계발', '창의성'];
-  const jobValueDescriptions = ['직업을 통해 자신의 능력을 발휘하는 것', '일하는 시간과 방식에 대해서 스스로 결정할 수 있는 것', '직업을 통해 많은 돈을 버는 것', '한 직장에서 오랫동안 일할 수 있는 것',
-    '내가 한 일을 다른 사람에게 인정받는 것', '다른 사람들에게 도움이 되는 일을 하는 것', '직업을 통해 더 배우고 발전할 기회가 있는 것', '스스로 아이디어를 내어 새로운 일을 해볼 수 있는 것'];
-
 
   const handleNameChange = (e) => {
     setName(e.target.value);
@@ -26,13 +27,46 @@ function Test() {
 
   const handleGenderChange = (e) => {
     setGender(e.target.value);
-  };
+  }
+
+  const nameValidation = useCallback(() => {
+    const re = /^[ㄱ-ㅎ|가-힣|a-z|A-Z]+$/;
+    if (re.test(name)) {
+      setNameValidationMsg('');
+    }
+    else if (name === '') {
+      setNameValidationMsg('이름을 입력하세요.');
+    }
+    else {
+      setNameValidationMsg('이름은 한글과 영어만 입력 가능합니다.');
+    }
+  }, [name]);
+
+  const genderValidation = useCallback(() => {
+    if (gender === '') {
+      setGenderValidationMsg('성별을 선택하세요.');
+    }
+    else {
+      setGenderValidationMsg('');
+    }
+
+  }, [gender]);
+
+  useEffect(() => {
+    nameValidation();
+  }, [nameValidation]);
+
+  useEffect(() => {
+    genderValidation();
+  }, [genderValidation]);
 
   const fetchSample = useCallback(async () => {
     const response = await axios.get(apiUrl);
     setSampleQuestion(response.data.RESULT[1].question);
     setSampleAnswer01(response.data.RESULT[1].answer01);
     setSampleAnswer02(response.data.RESULT[1].answer02);
+    setSampleAnswerDesc01(response.data.RESULT[1].answer03);
+    setSampleAnswerDesc02(response.data.RESULT[1].answer04);
   }, [apiUrl]);
 
   const fetchQuestions = useCallback(async () => {
@@ -75,11 +109,19 @@ function Test() {
     })
   };
 
-  const handleSubmit = e => {
+  const progressPercentageChange = useMemo(() => {
+    if (answers.length > 0) {
+      return Math.ceil(
+        (answers.filter(answer => answer != null)).length /
+          answers.length * 100);
+    }
+    return 0;
+  }, [answers]);
+
+  function handleSubmit(e) {
     e.preventDefault();
     const timestamp = String(new Date().getTime());
-    const totalAnswers = answers.map((answer, index) =>
-      "B" + String(parseInt(index) + 1) + "=" + answer);
+    const totalAnswers = answers.map((answer, index) => "B" + String(parseInt(index) + 1) + "=" + answer);
     const newTotalAnswers = totalAnswers.join(' ');
     console.log(newTotalAnswers);
 
@@ -92,36 +134,19 @@ function Test() {
       "startDtm": timestamp,
       "answers": newTotalAnswers
     };
-
-    console.log(data);
-
     const handlePost = async () => {
       const response = await axios.post(postApiUrl, data, { headers: { 'Content-Type': 'application/json' } });
       const seq = response.data.RESULT.url.split("=")[1];
-
       seq &&
         history.push('/testfinished/' + seq);
-
     };
-
     handlePost();
-
-  };
+  }
 
   const styleContainer = {
     width: "100%",
     maxWidth: "1200px",
     margin: "0 auto"
-  };
-
-  const styleJobValueDesc = {
-    width: "33%",
-    maxWidth: "200px",
-    textAlign: "left",
-    fontSize: "1rem",
-    fontWeight: "400",
-    margin: "0 auto",
-    padding: "1em"
   };
 
   const styleTitle = {
@@ -144,16 +169,34 @@ function Test() {
     width: "auto",
     fontSize: "1.25rem",
     textAlign: "center",
-    fontWeight: "360",
+    fontWeight: "400",
     padding: "1em"
   };
 
-  const styleExplanation = {
-    width: "auto",
+  const styleValidation = {
+    width: "33%",
     fontSize: "1.25rem",
     textAlign: "center",
     fontWeight: "400",
-    padding: "2em"
+    margin: "0 auto"
+  }
+
+  const styleProgressBar = {
+    width: "80%",
+    height: "30px",
+    margin: "0 auto",
+    fontSize: "1.25rem",
+    fontWeight: "400"
+  }
+
+
+  const styleExplanation = {
+    width: "60%",
+    fontSize: "1.25rem",
+    textAlign: "left",
+    fontWeight: "400",
+    padding: "0.5em",
+    margin: "0 auto"
   };
 
   const styleQuestion = {
@@ -169,7 +212,6 @@ function Test() {
     fontSize: "1.5rem",
     textAlign: "center",
     fontWeight: "500",
-    padding: "1em"
   };
 
   return (
@@ -184,13 +226,27 @@ function Test() {
         </div>
         </div>
         <div style={styleUserInfo}>
-          <p>이름</p>
-          <p><label><input type="text" name="name" placeholder="이름" onChange={handleNameChange} /></label></p>
-          <p>성별</p>
-          <p>
-            <label><input type="radio" name="gender" value="100323" onChange={handleGenderChange} />남성</label>{' '}{' '}
-            <label><input type="radio" name="gender" value="100324" onChange={handleGenderChange} />여성</label>
-          </p>
+          <div>
+            <p>이름</p>
+            <p><label><input type="text" name="name" placeholder="이름" onChange={handleNameChange} /></label></p>
+            {nameValidationMsg !== '' &&
+              <div style={styleValidation}>
+                <Alert variant="warning">{nameValidationMsg}</Alert>
+              </div>
+            }
+          </div>
+          <div>
+            <p>성별</p>
+            <p>
+              <label><input type="radio" name="gender" value="100323" onChange={handleGenderChange} />남성</label>{' '}{' '}
+              <label><input type="radio" name="gender" value="100324" onChange={handleGenderChange} />여성</label>
+            </p>
+            {genderValidationMsg !== '' &&
+              <div style={styleValidation}>
+                <Alert variant="warning">{genderValidationMsg}</Alert>
+              </div>
+            }
+          </div>
           <Button variant="outline-primary" size="lg" onClick={() => {
             setPage((current) => {
               return current + 1;
@@ -204,30 +260,23 @@ function Test() {
         page < 0 ? (
           <div style={styleContainer}>
             <div style={styleTitle}>직업가치관 검사</div>
+            <div><ProgressBar now={progressPercentageChange} label={`${progressPercentageChange}%`} style={styleProgressBar}/></div>
             <div style={styleQuestion}>
-              <p>[검사 예시]</p>
-              직업과 관련된 두개의 가치 중에서 자기에게 더 중요한 가치에 표시하세요.<br />
-              {sampleQuestion}<br />
+              본 직업가치관 검사는 총 28문항으로 구성되어있습니다. <br />
+                각 문항에서 직업과 관련된 두개의 가치 중 자신에게 더 중요한 가치에 표시하세요.<br />
+                가치의 뜻을 잘 모르겠다면 문항 아래에 있는 가치의 설명을 확인해보세요. <br /><br />
+              <p style={{ fontWeight: "500" }}>[검사 예시]</p>
+              {sampleQuestion}
             </div>
             <div style={styleAnswer}>
-              <label style={{ marginRight: "2em" }}><input type="radio" name="sampleAnswer" />{sampleAnswer01}</label>
-              <label><input type="radio" name="sampleAnswer" />{sampleAnswer02}</label><br />
-              <Accordion style={styleJobValueDesc}>
-                <Card>
-                  <Card.Header>
-                    <Accordion.Toggle as={Button} variant="link" eventKey="0">
-                      직업가치 설명 보기
-                    </Accordion.Toggle>
-                  </Card.Header>
-                  <Accordion.Collapse eventKey="0">
-                    <Card.Body>
-                      {jobValues[jobValues.indexOf(sampleAnswer01)]}{': '}{jobValueDescriptions[jobValues.indexOf(sampleAnswer01)]} <br />
-                      {jobValues[jobValues.indexOf(sampleAnswer02)]}{': '}{jobValueDescriptions[jobValues.indexOf(sampleAnswer02)]}
-                    </Card.Body>
-                  </Accordion.Collapse>
-                </Card>
-              </Accordion>
-              <div style={styleExplanation}> Tip: '직업가치 설명 보기'를 클릭하면 직업가치의 정의를 확인할 수 있습니다. </div>
+              <label style={{ marginRight: "2em" }}><input type="radio" name="sampleAnswer" onChange={(e) => setSampleAnswerValue(e.target.value)} />{sampleAnswer01}</label>
+              <label><input type="radio" name="sampleAnswer" onChange={(e) => setSampleAnswerValue(e.target.value)} />{sampleAnswer02}</label><br />
+              <div style={styleExplanation}>
+                <Alert variant="info">
+                  {sampleAnswer01}{': '}{sampleAnswerDesc01} <br />
+                  {sampleAnswer02}{': '}{sampleAnswerDesc02}
+                </Alert>
+              </div>
               <div class="form-group row">
                 <div class="col-md-6">
                   <Button type="button" class="btn form-control" variant="outline-primary" size="lg" onClick={() => {
@@ -243,7 +292,8 @@ function Test() {
                     setPage((current) => {
                       return current + 1;
                     });
-                  }}>
+                  }}
+                    disabled={!sampleAnswerValue}>
                     검사 시작
                   </Button>
                 </div>
@@ -253,6 +303,7 @@ function Test() {
         ) : (
             <div style={styleContainer}>
               <div style={styleTitle}>직업가치관 검사 진행</div>
+              <div><ProgressBar now={progressPercentageChange} label={`${progressPercentageChange}%`} style={styleProgressBar}/></div>
               <div>
                 {visibleQuestions.map((question) => {
                   const qitemNo = parseInt(question.qitemNo, 10);
@@ -280,21 +331,12 @@ function Test() {
                           />
                           {question.answer02}
                         </label>
-                        <Accordion style={styleJobValueDesc}>
-                          <Card>
-                            <Card.Header>
-                              <Accordion.Toggle as={Button} variant="link" eventKey="0" size="sm" >
-                                직업가치 설명 보기
-                              </Accordion.Toggle>
-                            </Card.Header>
-                            <Accordion.Collapse eventKey="0">
-                              <Card.Body>
-                                {jobValues[jobValues.indexOf(question.answer01)]}{': '}{jobValueDescriptions[jobValues.indexOf(question.answer01)]} <br />
-                                {jobValues[jobValues.indexOf(question.answer02)]}{': '}{jobValueDescriptions[jobValues.indexOf(question.answer02)]}
-                              </Card.Body>
-                            </Accordion.Collapse>
-                          </Card>
-                        </Accordion>
+                        <div style={styleExplanation}>
+                          <Alert variant="info">
+                            {question.answer01}{': '}{question.answer03} <br />
+                            {question.answer02}{': '}{question.answer04}
+                          </Alert>
+                        </div>
                       </div>
                     </div>
                   );

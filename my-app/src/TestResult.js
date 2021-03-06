@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import { useParams, Link } from 'react-router-dom';
-import { Chart } from "react-google-charts";
-import Button from 'react-bootstrap/Button';
-
+import { Chart } from 'react-google-charts';
+import { Button, Card } from 'react-bootstrap';
 
 function TestResult() {
     const { seq } = useParams();
@@ -124,6 +123,12 @@ function TestResult() {
         fetchJobsMajors();
     }, [fetchJobsMajors]);
 
+    const styleContainer = {
+        width: "100%",
+        maxWidth: "1200px",
+        margin: "0 auto"
+    };
+
     const styleTitle = {
         width: "auto",
         fontSize: "2.5rem",
@@ -176,9 +181,17 @@ function TestResult() {
         padding: "10px 20px"
     };
 
+    const styleCard = {
+        fontSize: "1.25rem",
+        textAlign: "left",
+        fontWeight: "400",
+        width: "90%",
+        margin: "0 auto"
+    };
+
 
     return (
-        <div>
+        <div style={styleContainer}>
             <div style={styleTitle}>직업가치관 검사 결과표</div>
             <div style={styleContent}>직업가치관이란 직업을 선택할 때 영향을 끼치는 자신만의 믿음과 신념입니다. 따라서 여러분의 직업생활과 관련하여 포기하지 않는 무게중심의 역할을 한다고 볼 수 있습니다. 직업가치관검사는 여러분이 직업을 선택할 때 상대적으로 어떠한 가치를 중요하게 생각하는지를 알려줍니다. 또한 본인이 가장 중요하게 생각하는 가치를 충족시켜줄 수 있는 직업에 대해 생각해 볼 기회를 제공합니다.</div>
             <div style={styleDiv}>
@@ -293,6 +306,18 @@ function TestResult() {
                     </table>
                 </div>
             </div>
+            <Card border="info" style={styleCard}>
+                <Card.Body>
+                    <Card.Title>
+                        직업가치관 검사 활용 가이드
+                    </Card.Title>
+                    <Card.Text>
+                        본 직업가치관 검사는 개인이 직업을 선택할 때 어떤 가치를 중요하게 여기는지 알려줍니다.
+                        직업을 선택할 때에는 직업가치관 외에도 흥미, 적성과 같은 심리적 특성을 통합적으로 고려하는 것이 좋습니다.
+                        본 검사 결과는 직업을 선택할 때 고려할 수 있는 하나의 요인으로 활용하시기 바랍니다.
+                    </Card.Text>
+                </Card.Body>
+            </Card>
             <div style={styleDiv}>
                 <Link to="/">
                     <Button variant="outline-primary" size="lg">
