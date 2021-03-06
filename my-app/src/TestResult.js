@@ -127,7 +127,7 @@ function TestResult() {
         width: "100%",
         maxWidth: "1200px",
         margin: "0 auto"
-      };
+    };
 
     const styleTitle = {
         width: "auto",
@@ -185,7 +185,7 @@ function TestResult() {
         fontSize: "1.25rem",
         textAlign: "left",
         fontWeight: "400",
-        width: "90%", 
+        width: "90%",
         margin: "0 auto"
     };
 
@@ -313,7 +313,7 @@ function TestResult() {
                     </Card.Title>
                     <Card.Text>
                         본 직업가치관 검사는 개인이 직업을 선택할 때 어떤 가치를 중요하게 여기는지 알려줍니다.
-                        직업을 선택할 때에는 직업가치관 외에도 흥미, 적성과 같은 심리적 특성을 고려하는 것이 좋습니다.
+                        직업을 선택할 때에는 직업가치관 외에도 흥미, 적성과 같은 심리적 특성을 통합적으로 고려하는 것이 좋습니다.
                         본 검사 결과는 직업을 선택할 때 고려할 수 있는 하나의 요인으로 활용하시기 바랍니다.
                     </Card.Text>
                 </Card.Body>

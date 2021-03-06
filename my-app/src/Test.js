@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
-import { Alert, Button } from "react-bootstrap";
+import { Alert, Button, ProgressBar } from "react-bootstrap";
 
 function Test() {
   const [name, setName] = useState('');
+  const [nameValidationMsg, setNameValidationMsg] = useState('');
+  const [genderValidationMsg, setGenderValidationMsg] = useState('');
   const [gender, setGender] = useState('');
   const [sampleQuestion, setSampleQuestion] = useState('');
   const [sampleAnswer01, setSampleAnswer01] = useState('');
@@ -25,7 +27,38 @@ function Test() {
 
   const handleGenderChange = (e) => {
     setGender(e.target.value);
-  };
+  }
+
+  const nameValidation = useCallback(() => {
+    const re = /^[ㄱ-ㅎ|가-힣|a-z|A-Z]+$/;
+    if (re.test(name)) {
+      setNameValidationMsg('');
+    }
+    else if (name === '') {
+      setNameValidationMsg('이름을 입력하세요.');
+    }
+    else {
+      setNameValidationMsg('이름은 한글과 영어만 입력 가능합니다.');
+    }
+  }, [name]);
+
+  const genderValidation = useCallback(() => {
+    if (gender === '') {
+      setGenderValidationMsg('성별을 선택하세요.');
+    }
+    else {
+      setGenderValidationMsg('');
+    }
+
+  }, [gender]);
+
+  useEffect(() => {
+    nameValidation();
+  }, [nameValidation]);
+
+  useEffect(() => {
+    genderValidation();
+  }, [genderValidation]);
 
   const fetchSample = useCallback(async () => {
     const response = await axios.get(apiUrl);
@@ -76,11 +109,19 @@ function Test() {
     })
   };
 
-  const handleSubmit = e => {
+  const progressPercentageChange = useMemo(() => {
+    if (answers.length > 0) {
+      return Math.ceil(
+        (answers.filter(answer => answer != null)).length /
+          answers.length * 100);
+    }
+    return 0;
+  }, [answers]);
+
+  function handleSubmit(e) {
     e.preventDefault();
     const timestamp = String(new Date().getTime());
-    const totalAnswers = answers.map((answer, index) =>
-      "B" + String(parseInt(index) + 1) + "=" + answer);
+    const totalAnswers = answers.map((answer, index) => "B" + String(parseInt(index) + 1) + "=" + answer);
     const newTotalAnswers = totalAnswers.join(' ');
     console.log(newTotalAnswers);
 
@@ -93,21 +134,14 @@ function Test() {
       "startDtm": timestamp,
       "answers": newTotalAnswers
     };
-
-    console.log(data);
-
     const handlePost = async () => {
       const response = await axios.post(postApiUrl, data, { headers: { 'Content-Type': 'application/json' } });
       const seq = response.data.RESULT.url.split("=")[1];
-
       seq &&
         history.push('/testfinished/' + seq);
-
     };
-
     handlePost();
-
-  };
+  }
 
   const styleContainer = {
     width: "100%",
@@ -135,9 +169,26 @@ function Test() {
     width: "auto",
     fontSize: "1.25rem",
     textAlign: "center",
-    fontWeight: "360",
+    fontWeight: "400",
     padding: "1em"
   };
+
+  const styleValidation = {
+    width: "33%",
+    fontSize: "1.25rem",
+    textAlign: "center",
+    fontWeight: "400",
+    margin: "0 auto"
+  }
+
+  const styleProgressBar = {
+    width: "80%",
+    height: "30px",
+    margin: "0 auto",
+    fontSize: "1.25rem",
+    fontWeight: "400"
+  }
+
 
   const styleExplanation = {
     width: "60%",
@@ -161,7 +212,6 @@ function Test() {
     fontSize: "1.5rem",
     textAlign: "center",
     fontWeight: "500",
-    padding: "1em"
   };
 
   return (
@@ -176,13 +226,27 @@ function Test() {
         </div>
         </div>
         <div style={styleUserInfo}>
-          <p>이름</p>
-          <p><label><input type="text" name="name" placeholder="이름" onChange={handleNameChange} /></label></p>
-          <p>성별</p>
-          <p>
-            <label><input type="radio" name="gender" value="100323" onChange={handleGenderChange} />남성</label>{' '}{' '}
-            <label><input type="radio" name="gender" value="100324" onChange={handleGenderChange} />여성</label>
-          </p>
+          <div>
+            <p>이름</p>
+            <p><label><input type="text" name="name" placeholder="이름" onChange={handleNameChange} /></label></p>
+            {nameValidationMsg !== '' &&
+              <div style={styleValidation}>
+                <Alert variant="warning">{nameValidationMsg}</Alert>
+              </div>
+            }
+          </div>
+          <div>
+            <p>성별</p>
+            <p>
+              <label><input type="radio" name="gender" value="100323" onChange={handleGenderChange} />남성</label>{' '}{' '}
+              <label><input type="radio" name="gender" value="100324" onChange={handleGenderChange} />여성</label>
+            </p>
+            {genderValidationMsg !== '' &&
+              <div style={styleValidation}>
+                <Alert variant="warning">{genderValidationMsg}</Alert>
+              </div>
+            }
+          </div>
           <Button variant="outline-primary" size="lg" onClick={() => {
             setPage((current) => {
               return current + 1;
@@ -196,11 +260,12 @@ function Test() {
         page < 0 ? (
           <div style={styleContainer}>
             <div style={styleTitle}>직업가치관 검사</div>
+            <div><ProgressBar now={progressPercentageChange} label={`${progressPercentageChange}%`} style={styleProgressBar}/></div>
             <div style={styleQuestion}>
-                본 직업가치관 검사는 총 28문항으로 구성되어있습니다. <br />
-                각 문항에서 직업과 관련된 두개의 가치 중 자기에게 더 중요한 가치에 표시하세요.<br />
+              본 직업가치관 검사는 총 28문항으로 구성되어있습니다. <br />
+                각 문항에서 직업과 관련된 두개의 가치 중 자신에게 더 중요한 가치에 표시하세요.<br />
                 가치의 뜻을 잘 모르겠다면 문항 아래에 있는 가치의 설명을 확인해보세요. <br /><br />
-              <p style={{fontWeight: "500"}}>[검사 예시]</p>
+              <p style={{ fontWeight: "500" }}>[검사 예시]</p>
               {sampleQuestion}
             </div>
             <div style={styleAnswer}>
@@ -238,6 +303,7 @@ function Test() {
         ) : (
             <div style={styleContainer}>
               <div style={styleTitle}>직업가치관 검사 진행</div>
+              <div><ProgressBar now={progressPercentageChange} label={`${progressPercentageChange}%`} style={styleProgressBar}/></div>
               <div>
                 {visibleQuestions.map((question) => {
                   const qitemNo = parseInt(question.qitemNo, 10);
