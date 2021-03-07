@@ -2,8 +2,8 @@ import React from 'react';
 import { Table } from 'react-bootstrap';
 
 const styleDiv = {
-    fontSize: "1.25rem",
-    fontWeight: "400",
+    fontSize: "1rem",
+    fontWeight: "360",
     width: "auto",
     justifyContent: "center",
     padding: "1em"

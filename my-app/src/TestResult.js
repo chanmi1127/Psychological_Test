@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import { useParams, Link } from 'react-router-dom';
-// import { Chart } from 'react-google-charts';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer } from 'recharts';
 import { Button, Card, Table } from 'react-bootstrap';
 import TestResultJobValues from './TestResultJobValues';
@@ -77,31 +76,6 @@ function TestResult() {
         setFirstLowestScoreNum(firstLowestNum);
         setSecondLowestScoreNum(secondLowestNum);
 
-        // const chartData = [
-        //     ['직업가치관', '점수'],
-        //     ['능력발휘', scores[0]],
-        //     ['자율성', scores[1]],
-        //     ['보수', scores[2]],
-        //     ['안정성', scores[3]],
-        //     ['사회적인정', scores[4]],
-        //     ['사회봉사', scores[5]],
-        //     ['자기계발', scores[6]],
-        //     ['창의성', scores[7]],
-        // ];
-
-        // const chartData = [
-        //     { value: '능력발휘', score: scores[0] },
-        //     { value: '자율성', score: scores[1] },
-        //     { value: '보수', score: scores[2] },
-        //     { value: '안정성', score: scores[3] },
-        //     { value: '사회적인정', score: scores[4] },
-        //     { value: '사회봉사', score: scores[5] },
-        //     { value: '자기계발', score: scores[6] },
-        //     { value: '창의성', score: scores[7] }
-        // ];
-
-        // setResultChartData(chartData);
-
         const chartData = [
             { 가치: '능력발휘', 점수: scores[0] },
             { 가치: '자율성', 점수: scores[1] },
@@ -157,15 +131,15 @@ function TestResult() {
 
     const styleTitle = {
         width: "auto",
-        fontSize: "2.5rem",
+        fontSize: "2rem",
         textAlign: "center",
         fontWeight: "400",
-        padding: "1em"
+        padding: "0.75em"
     };
 
     const styleMainTitle = {
         width: "auto",
-        fontSize: "2rem",
+        fontSize: "1.75rem",
         textAlign: "center",
         fontWeight: "400",
         padding: "1em"
@@ -181,9 +155,9 @@ function TestResult() {
 
     const styleContent = {
         width: "auto",
-        fontSize: "1.25rem",
+        fontSize: "1rem",
         textAlign: "left",
-        fontWeight: "360",
+        fontWeight: "400",
         padding: "1em 2em"
     };
 
@@ -196,20 +170,37 @@ function TestResult() {
     };
 
     const styleDiv = {
-        fontSize: "1.25rem",
-        fontWeight: "400",
+        fontSize: "1rem",
+        fontWeight: "360",
         width: "auto",
         justifyContent: "center",
         padding: "1em"
     };
 
 
-    const styleCard = {
-        fontSize: "1.25rem",
+    const styleCardGuide = {
+        fontSize: "1rem",
         textAlign: "left",
-        fontWeight: "400",
+        fontWeight: "360",
         width: "90%",
         margin: "0 auto"
+    };
+
+    const styleCardInfo = {
+        fontSize: "1rem",
+        textAlign: "left",
+        fontWeight: "500",
+        width: "90%",
+        margin: "0 auto"
+    };
+
+
+    const styleButton = {
+        width: "auto",
+        fontSize: "1.5rem",
+        textAlign: "center",
+        fontWeight: "360",
+        padding: "1em 2em"
     };
 
     return (
@@ -237,7 +228,7 @@ function TestResult() {
             <div>
                 <div style={styleMainTitle}>1. 직업가치관 검사 결과 </div>
                 <div>
-                    <Card border="info" style={styleCard}>
+                    <Card border="info" style={styleCardGuide}>
                         <Card.Body>
                             <Card.Title>
                                 직업가치관 검사 결과 해석 가이드
@@ -251,30 +242,34 @@ function TestResult() {
                         </Card.Body>
                     </Card>
                 </div>
-                <div style={styleContent}>
-                    직업생활과 관련하여 {name}님은 {firstHighestScoreNum && jobValues[firstHighestScoreNum - 1]}과(와) {secondHighestScoreNum && jobValues[secondHighestScoreNum - 1]}을(를) 가장 중요하게 생각합니다.
+                <div style={{ padding: "1em 0 " }}>
+                    <Card style={styleCardInfo} border="secondary">
+                        <Card.Body>
+                            <Card.Text>
+                                직업생활과 관련하여 {name && name}님은 {firstHighestScoreNum && jobValues[firstHighestScoreNum - 1]}과(와) {secondHighestScoreNum && jobValues[secondHighestScoreNum - 1]}을(를) 가장 중요하게 생각합니다.
                     반면에 {firstLowestScoreNum && jobValues[firstLowestScoreNum - 1]}, {secondLowestScoreNum && jobValues[secondLowestScoreNum - 1]}은(는) 상대적으로 덜 중요하게 생각합니다.
+                    </Card.Text>
+                        </Card.Body>
+                    </Card>
                 </div>
                 <div style={styleSubTitle}>직업가치관 검사 결과 그래프</div>
-                <div style={{
-                    paddingBottom: '56.25%',
-                    position: 'relative',
-                    height: 0
-                }}>
-                    <div style={{
-                        position: 'absolute',
-                        top: '0',
-                        left: '0',
-                        width: '100%',
-                        height: '100%'
-                    }}>
+                <div style={{ position: 'relative', width: '100%', paddingBottom: '56.25%' }}>
+                    <div
+                        style={{
+                            position: 'absolute',
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            top: 0,
+                        }}>
                         <ResponsiveContainer>
                             <BarChart
-                                width={800}
-                                height={600}
-                                data={resultChartData && resultChartData}
-                                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                            >
+                                width={600}
+                                height={400}
+                                data={resultChartData}
+                                margin={{
+                                    top: 20, right: 20, bottom: 20, left: 20,
+                                }}>
                                 <CartesianGrid strokeDasharray="3 3" />
                                 <XAxis dataKey="가치" />
                                 <YAxis />
@@ -283,6 +278,7 @@ function TestResult() {
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
+
                 </div>
                 <div style={styleMainTitle}>2. 직업가치에 대한 설명</div>
                 <TestResultJobValues />
@@ -290,7 +286,7 @@ function TestResult() {
             <div>
                 <div style={styleMainTitle}>3. 가치관과 관련이 높은 직업</div>
                 <div>
-                    <Card border="info" style={styleCard}>
+                    <Card border="info" style={styleCardGuide}>
                         <Card.Body>
                             <Card.Title>
                                 직업가치관별 직업 해석 가이드
@@ -303,8 +299,14 @@ function TestResult() {
                         </Card.Body>
                     </Card>
                 </div>
-                <div style={styleContent}>
-                    {name}님이 중요하게 생각하는 {firstHighestScoreNum && jobValues[firstHighestScoreNum - 1]}과(와) {secondHighestScoreNum && jobValues[secondHighestScoreNum - 1]}을(를) 만족시킬 수 있는 직업은 다음과 같습니다.
+                <div style={{ padding: "1em 0 " }}>
+                    <Card style={styleCardInfo} border="secondary">
+                        <Card.Body>
+                            <Card.Text>
+                                {name && name}님이 중요하게 생각하는 {firstHighestScoreNum && jobValues[firstHighestScoreNum - 1]}과(와) {secondHighestScoreNum && jobValues[secondHighestScoreNum - 1]}을(를) 만족시킬 수 있는 직업은 다음과 같습니다.
+                    </Card.Text>
+                        </Card.Body>
+                    </Card>
                 </div>
                 <div style={styleSubTitle}>[종사자 평균 학력별]</div>
                 <div style={styleCareerNet}>
@@ -388,7 +390,7 @@ function TestResult() {
                 </div>
             </div>
             <div style={{ padding: "1em 0 0 0" }}>
-                <Card border="info" style={styleCard}>
+                <Card border="info" style={styleCardGuide}>
                     <Card.Body>
                         <Card.Title>
                             직업가치관 검사 활용 가이드
@@ -402,11 +404,11 @@ function TestResult() {
                 </Card>
             </div>
             <div style={styleDiv}>
-                <Card style={styleCard}>
+                <Card style={styleCardGuide}>
                     <Card.Header>성인 직업심리검사 더 알아보기</Card.Header>
                     <Card.Body>
                         <Card.Title>
-                            커리어넷 직업심리검사{' '} <Button href="https://www.career.go.kr/cnet/front/examen/inspctNor.do" variant="info">검사하러 가기</Button>
+                            커리어넷 직업심리검사 &nbsp; <Button href="https://www.career.go.kr/cnet/front/examen/inspctNor.do" variant="info">검사하러 가기</Button>
                         </Card.Title>
                         <Card.Text>
                             -진로개발준비도검사  <br />
@@ -416,7 +418,7 @@ function TestResult() {
                         </Card.Text>
                         <br />
                         <Card.Title>
-                            워크넷 직업심리검사 {' '} <Button href="https://www.work.go.kr/consltJobCarpa/jobPsyExamNew/jobPsyExamAdultList.do" variant="info">검사하러 가기</Button>
+                            워크넷 직업심리검사 &nbsp; <Button href="https://www.work.go.kr/consltJobCarpa/jobPsyExamNew/jobPsyExamAdultList.do" variant="info">검사하러 가기</Button>
                         </Card.Title>
                         <Card.Text>
                             -직업선호도검사  <br />
@@ -434,13 +436,7 @@ function TestResult() {
                     </Card.Body>
                 </Card>
             </div>
-            <div style={{
-                width: "auto",
-                fontSize: "1.5rem",
-                textAlign: "center",
-                fontWeight: "360",
-                padding: "1em 2em"
-            }}>
+            <div style={styleButton}>
                 <Link to="/">
                     <Button variant="outline-primary" size="lg">
                         다시 검사하기
