@@ -184,10 +184,10 @@ function Test() {
   }
 
   const styleProgressBar = {
-    width: "60%",
-    height: "20px",
+    width: "80%",
+    height: "30px",
     margin: "0 auto",
-    fontSize: "0.75rem",
+    fontSize: "1rem",
     fontWeight: "400"
   }
 
