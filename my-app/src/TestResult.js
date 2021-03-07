@@ -104,6 +104,16 @@ function TestResult() {
         setMajors(response.data);
     }, [jobsMajorsApi]);
 
+    const copyUrlToClipboard = () => {
+        var url = document.body.appendChild(document.createElement("input"));
+        url.value = window.location.href;
+        url.focus();
+        url.select();
+        document.execCommand('copy');
+        url.parentNode.removeChild(url);
+        alert('URL이 클립보드에 복사되었습니다.');
+
+    };
 
     useEffect(() => {
         fetchUserInfo();
@@ -195,6 +205,14 @@ function TestResult() {
     };
 
 
+    const styleCopyUrl = {
+        width: "auto",
+        fontSize: "1rem",
+        textAlign: "center",
+        fontWeight: "400",
+    };
+
+
     const styleButton = {
         width: "auto",
         fontSize: "1.5rem",
@@ -253,7 +271,7 @@ function TestResult() {
                     </Card>
                 </div>
                 <div style={styleSubTitle}>직업가치관 검사 결과 그래프</div>
-                <div style={{ position: 'relative', width: '100%', paddingBottom: '56.25%' }}>
+                <div style={{ position: 'relative', width: '100%', height: '0', paddingBottom: '56.25%' }}>
                     <div
                         style={{
                             position: 'absolute',
@@ -268,17 +286,16 @@ function TestResult() {
                                 height={400}
                                 data={resultChartData}
                                 margin={{
-                                    top: 20, right: 20, bottom: 20, left: 20,
+                                    top: 10, right: 5, bottom: 10, left: 0,
                                 }}>
                                 <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="가치" />
-                                <YAxis />
+                                <XAxis dataKey="가치" tick={{ fontSize: '10px', wordWrap: 'break-word' }} interval={0} />
+                                <YAxis tick={{ fontSize: '10px' }} />
                                 <Legend />
                                 <Bar dataKey="점수" fill="#82ca9d" />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
-
                 </div>
                 <div style={styleMainTitle}>2. 직업가치에 대한 설명</div>
                 <TestResultJobValues />
@@ -408,8 +425,8 @@ function TestResult() {
                     <Card.Header>성인 직업심리검사 더 알아보기</Card.Header>
                     <Card.Body>
                         <Card.Title>
-                            커리어넷 직업심리검사 &nbsp; 
-                            <Button onClick={() => window.open('https://www.career.go.kr/cnet/front/examen/inspctNor.do', '_blank' )} variant="info">검사하러 가기</Button>
+                            커리어넷 직업심리검사 &nbsp;
+                            <Button onClick={() => window.open('https://www.career.go.kr/cnet/front/examen/inspctNor.do', '_blank')} variant="info">검사하러 가기</Button>
                         </Card.Title>
                         <Card.Text>
                             -진로개발준비도검사  <br />
@@ -419,8 +436,8 @@ function TestResult() {
                         </Card.Text>
                         <br />
                         <Card.Title>
-                            워크넷 직업심리검사 &nbsp; 
-                            <Button onClick={() => window.open('https://www.work.go.kr/consltJobCarpa/jobPsyExamNew/jobPsyExamAdultList.do', '_blank' )} variant="info">검사하러 가기</Button>
+                            워크넷 직업심리검사 &nbsp;
+                            <Button onClick={() => window.open('https://www.work.go.kr/consltJobCarpa/jobPsyExamNew/jobPsyExamAdultList.do', '_blank')} variant="info">검사하러 가기</Button>
                         </Card.Title>
                         <Card.Text>
                             -직업선호도검사  <br />
@@ -437,6 +454,16 @@ function TestResult() {
                     </Card.Text>
                     </Card.Body>
                 </Card>
+                <div></div>
+            </div>
+            {/* <div style={styleCopyUrl}>
+                '결과 공유하기' 버튼을 누르면 URL이 클립보드에 복사됩니다. 
+            </div> */}
+            <div style={styleButton}>
+            <Button onClick={copyUrlToClipboard} variant="outline-primary" size="lg">결과 공유하기</Button>
+            </div>
+            <div style={styleCopyUrl}>
+                '결과 공유하기' 버튼을 누르면 URL이 클립보드에 복사됩니다. 
             </div>
             <div style={styleButton}>
                 <Link to="/">
