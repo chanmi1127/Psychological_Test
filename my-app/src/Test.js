@@ -115,7 +115,7 @@ function Test() {
     if (answers.length > 0) {
       return Math.ceil(
         (answers.filter(answer => answer != null)).length /
-          answers.length * 100);
+        answers.length * 100);
     }
     return 0;
   }, [answers]);
@@ -199,6 +199,15 @@ function Test() {
     margin: "0 auto"
   };
 
+  const styleInstruction = {
+    width: "70%",
+    fontSize: "1rem",
+    textAlign: "left",
+    fontWeight: "400",
+    padding: "1em 2em",
+    margin: "0 auto"
+  };
+
   const styleQuestion = {
     width: "auto",
     fontSize: "1rem",
@@ -220,20 +229,20 @@ function Test() {
         <div>
           <div style={styleTitle}>직업가치관 검사</div>
           <div style={styleContent}>
-            본 직업가치관 검사는 커리어넷에서 직업가치관 검사를 Open API로 제공받아 사용하였습니다. 
-            직업가치란 직업생활을 통하여 충족하고자 하는 욕구 또는 상대적으로 중요시하는 것을 의미합니다. 
-            이 검사는 직업과 관련된 다양한 욕구 및 가치들에 대해 여러분이 상대적으로 무엇을 얼마나 더 중요하게 여기는가를 살펴보고, 
+            본 직업가치관 검사는 커리어넷에서 직업가치관 검사를 Open API로 제공받아 사용하였습니다.
+            직업가치란 직업생활을 통하여 충족하고자 하는 욕구 또는 상대적으로 중요시하는 것을 의미합니다.
+            이 검사는 직업과 관련된 다양한 욕구 및 가치들에 대해 여러분이 상대적으로 무엇을 얼마나 더 중요하게 여기는가를 살펴보고,
             그 가치가 충족될 가능성이 높은 직업을 탐색할 수 있도록 도움을 주는 검사입니다.
         </div>
         </div>
         <div style={styleUserInfo}>
-        {(nameValidationMsg !== '' || genderValidationMsg !== '') && 
+          {(nameValidationMsg !== '' || genderValidationMsg !== '') &&
             <div style={styleValidation}>
-                <Alert variant="warning">
-                  <div>{nameValidationMsg !== ''&& nameValidationMsg}</div>
-                  <div>{genderValidationMsg !== ''&& genderValidationMsg}</div>
-                  </Alert>
-              </div>}
+              <Alert variant="warning">
+                <div>{nameValidationMsg !== '' && nameValidationMsg}</div>
+                <div>{genderValidationMsg !== '' && genderValidationMsg}</div>
+              </Alert>
+            </div>}
           <div>
             <p>이름</p>
             <p><label><input type="text" name="name" placeholder="이름" onChange={handleNameChange} /></label></p>
@@ -258,11 +267,14 @@ function Test() {
         page < 0 ? (
           <div style={styleContainer}>
             <div style={styleTitle}>직업가치관 검사</div>
-            <div><ProgressBar now={progressPercentage} label={`${progressPercentage}%`} style={styleProgressBar}/></div>
-            <div style={styleQuestion}>
-              본 직업가치관 검사는 총 28문항으로 구성되어있습니다. <br />
-                각 문항에서 직업과 관련된 두개의 가치 중 자신에게 더 중요한 가치에 표시하세요.<br />
-                가치의 뜻을 잘 모르겠다면 문항 아래에 있는 가치의 설명을 확인해보세요. <br /><br />
+            <div><ProgressBar now={progressPercentage} label={`${progressPercentage}%`} style={styleProgressBar} /></div>
+            <div style={styleInstruction}>
+              본 직업가치관 검사는 총 28문항으로 구성되어있습니다. 
+              검사 예상 소요 시간은 약 10분입니다. 
+              각 문항에서 직업과 관련된 두개의 가치 중 자신에게 더 중요한 가치에 표시하세요.
+              가치의 뜻을 잘 모르겠다면 문항 아래에 있는 가치의 설명을 확인해보세요. 
+              </div>
+              <div style={styleQuestion}>
               <p style={{ fontWeight: "500" }}>[검사 예시]</p>
               {sampleQuestion}
             </div>
@@ -277,7 +289,7 @@ function Test() {
               </div>
               <div class="form-group row">
                 <div class="col-md-6">
-                  <Button type="button" class="btn form-control" variant="outline-primary"  onClick={() => {
+                  <Button type="button" class="btn form-control" variant="outline-primary" onClick={() => {
                     setPage((current) => {
                       return current - 1;
                     });
@@ -286,7 +298,7 @@ function Test() {
                   </Button>
                 </div>
                 <div class="col-md-6">
-                  <Button type="button" class="btn form-control" variant="outline-primary"  onClick={() => {
+                  <Button type="button" class="btn form-control" variant="outline-primary" onClick={() => {
                     setPage((current) => {
                       return current + 1;
                     });
@@ -301,7 +313,7 @@ function Test() {
         ) : (
             <div style={styleContainer}>
               <div style={styleTitle}>직업가치관 검사 진행</div>
-              <div><ProgressBar now={progressPercentage} label={`${progressPercentage}%`} style={styleProgressBar}/></div>
+              <div><ProgressBar now={progressPercentage} label={`${progressPercentage}%`} style={styleProgressBar} /></div>
               <div>
                 {visibleQuestions.map((question) => {
                   const qitemNo = parseInt(question.qitemNo, 10);
@@ -344,7 +356,7 @@ function Test() {
               <div style={styleAnswer}>
                 <div class="form-group row">
                   <div class="col-md-6">
-                    <Button type="button" class="btn form-control" variant="outline-primary" 
+                    <Button type="button" class="btn form-control" variant="outline-primary"
                       onClick={() => {
                         setPage((current) => {
                           return current - 1;
@@ -356,7 +368,7 @@ function Test() {
                   </div>
                   {page < 5 ? (
                     <div class="col-md-6">
-                      <Button type="button" class="btn form-control" variant="outline-primary" 
+                      <Button type="button" class="btn form-control" variant="outline-primary"
                         onClick={() => {
                           setPage((current) => {
                             return current + 1;

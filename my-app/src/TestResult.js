@@ -456,9 +456,6 @@ function TestResult() {
                 </Card>
                 <div></div>
             </div>
-            {/* <div style={styleCopyUrl}>
-                '결과 공유하기' 버튼을 누르면 URL이 클립보드에 복사됩니다. 
-            </div> */}
             <div style={styleButton}>
             <Button onClick={copyUrlToClipboard} variant="outline-primary" size="lg">결과 공유하기</Button>
             </div>
