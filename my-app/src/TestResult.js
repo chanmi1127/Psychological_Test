@@ -408,7 +408,8 @@ function TestResult() {
                     <Card.Header>성인 직업심리검사 더 알아보기</Card.Header>
                     <Card.Body>
                         <Card.Title>
-                            커리어넷 직업심리검사 &nbsp; <Button href="https://www.career.go.kr/cnet/front/examen/inspctNor.do" variant="info">검사하러 가기</Button>
+                            커리어넷 직업심리검사 &nbsp; 
+                            <Button onClick={() => window.open('https://www.career.go.kr/cnet/front/examen/inspctNor.do', '_blank' )} variant="info">검사하러 가기</Button>
                         </Card.Title>
                         <Card.Text>
                             -진로개발준비도검사  <br />
@@ -418,7 +419,8 @@ function TestResult() {
                         </Card.Text>
                         <br />
                         <Card.Title>
-                            워크넷 직업심리검사 &nbsp; <Button href="https://www.work.go.kr/consltJobCarpa/jobPsyExamNew/jobPsyExamAdultList.do" variant="info">검사하러 가기</Button>
+                            워크넷 직업심리검사 &nbsp; 
+                            <Button onClick={() => window.open('https://www.work.go.kr/consltJobCarpa/jobPsyExamNew/jobPsyExamAdultList.do', '_blank' )} variant="info">검사하러 가기</Button>
                         </Card.Title>
                         <Card.Text>
                             -직업선호도검사  <br />
