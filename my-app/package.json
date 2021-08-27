@@ -18,10 +18,11 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "set PORT=80 && react-scripts start",
-    "build": "react-scripts build",
+    "start": "react-scripts start",
+    "build": "CI=false react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "netlify": "netlify"
   },
   "eslintConfig": {
     "extends": [
@@ -40,5 +41,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "netlify-cli": "^6.7.7"
   }
 }
